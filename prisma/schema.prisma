@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  createdAt DateTime @default(now())
+  memos     Memo[]
+}
+
+model Stock {
+  // 主キーは銘柄コード（例: "1301"）
+  code            String   @id
+
+  // 基本情報
+  name            String                       // 銘柄名
+  marketSegment   String?                      // 市場・商品区分（例: "プライム（内国株式）", "ETF・ETN"）
+  
+  // 業種（33/17分類）
+  industry33Code  String?                      // 33業種コード
+  industry33Name  String?                      // 33業種区分（33業種の名前）
+  industry17Code  String?                      // 17業種コード
+  industry17Name  String?                      // 17業種区分（17業種の名前）
+
+  // 規模
+  scaleCode       String?                      // 規模コード
+  scaleName       String?                      // 規模区分（例: "TOPIX Small 2"）
+
+  // CSVの「日付」列を格納（元データの基準日や上場日などに使える）
+  // CSVでは "20250829" のような整数形式でした。取り込み時に Date に変換してください。
+  listedDate      DateTime?
+
+  // 元行を丸ごと保存（将来のカラム追加に柔軟に対応するため）
+  rawCsv          Json?    @db.JsonB
+
+  createdAt       DateTime @default(now())
+
+  // relation
+  memos           Memo[]
+}
+
+model Memo {
+  id         String    @id @default(uuid())
+  userId     String
+  stockCode  String
+  title      String?
+  content    String
+  tags       String[]  @default([])
+  pinned     Boolean   @default(false)
+  visibility String    @default("private")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user   User  @relation(fields: [userId], references: [id])
+  stock  Stock @relation(fields: [stockCode], references: [code])
+}
