@@ -7,45 +7,89 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String?
-  email     String   @unique
-  createdAt DateTime @default(now())
-  memos     Memo[]
+/*
+  ----- Auth models for NextAuth (Prisma adapter) -----
+  These are required for NextAuth to store sessions/accounts/etc.
+*/
+model Account {
+  id                 Int      @id @default(autoincrement())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?   @db.Text
+  access_token       String?   @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?   @db.Text
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
 }
 
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+/*
+  ----- Domain models -----
+*/
+
+/* User model used by application & by NextAuth adapter.
+   id is string UUID to keep consistency with other UUID PKs.
+*/
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  createdAt     DateTime  @default(now())
+  // relation fields
+  accounts      Account[]
+  sessions      Session[]
+  memos         Memo[]
+}
+
+/* Stock model (based on provided CSV columns) */
 model Stock {
-  // 主キーは銘柄コード（例: "1301"）
+  // primary key: stock code (string to allow leading zeros if any)
   code            String   @id
 
-  // 基本情報
-  name            String                       // 銘柄名
-  marketSegment   String?                      // 市場・商品区分（例: "プライム（内国株式）", "ETF・ETN"）
-  
-  // 業種（33/17分類）
-  industry33Code  String?                      // 33業種コード
-  industry33Name  String?                      // 33業種区分（33業種の名前）
-  industry17Code  String?                      // 17業種コード
-  industry17Name  String?                      // 17業種区分（17業種の名前）
-
-  // 規模
-  scaleCode       String?                      // 規模コード
-  scaleName       String?                      // 規模区分（例: "TOPIX Small 2"）
-
-  // CSVの「日付」列を格納（元データの基準日や上場日などに使える）
-  // CSVでは "20250829" のような整数形式でした。取り込み時に Date に変換してください。
+  // basic info
+  name            String
+  marketSegment   String?                      // 市場・商品区分
+  industry33Code  String?
+  industry33Name  String?
+  industry17Code  String?
+  industry17Name  String?
+  scaleCode       String?
+  scaleName       String?
   listedDate      DateTime?
-
-  // 元行を丸ごと保存（将来のカラム追加に柔軟に対応するため）
   rawCsv          Json?    @db.JsonB
-
   createdAt       DateTime @default(now())
 
   // relation
   memos           Memo[]
 }
 
+/* Memo model */
 model Memo {
   id         String    @id @default(uuid())
   userId     String
@@ -60,4 +104,7 @@ model Memo {
 
   user   User  @relation(fields: [userId], references: [id])
   stock  Stock @relation(fields: [stockCode], references: [code])
+
+  @@index([userId])
+  @@index([stockCode])
 }
