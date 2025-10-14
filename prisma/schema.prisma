@@ -1,110 +1,115 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
-/*
-  ----- Auth models for NextAuth (Prisma adapter) -----
-  These are required for NextAuth to store sessions/accounts/etc.
-*/
+/**
+ * ----- Auth models for NextAuth (Prisma adapter) -----
+ * These are required for NextAuth to store sessions/accounts/etc.
+ */
 model Account {
-  id                 Int      @id @default(autoincrement())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?   @db.Text
-  access_token       String?   @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?   @db.Text
-  session_state      String?
-  oauth_token_secret String?
-  oauth_token        String?
+    id                 String  @id @default(cuid())
+    userId             String
+    type               String
+    provider           String
+    providerAccountId  String
+    refresh_token      String? @db.Text
+    access_token       String? @db.Text
+    expires_at         Int?
+    token_type         String?
+    scope              String?
+    id_token           String? @db.Text
+    session_state      String?
+    oauth_token_secret String?
+    oauth_token        String?
 
-  user User @relation(fields: [userId], references: [id])
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+    @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           Int      @id @default(autoincrement())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
 
-  user User @relation(fields: [userId], references: [id])
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+    identifier String
+    token      String   @unique
+    expires    DateTime
 
-  @@unique([identifier, token])
+    @@index([identifier], name: "identifier_idx")
 }
 
-/*
-  ----- Domain models -----
-*/
+/**
+ * ----- Domain models -----
+ */
 
-/* User model used by application & by NextAuth adapter.
-   id is string UUID to keep consistency with other UUID PKs.
-*/
+/**
+ * User model used by application & by NextAuth adapter.
+ * id is string UUID to keep consistency with other UUID PKs.
+ */
 model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String    @unique
-  createdAt     DateTime  @default(now())
-  // relation fields
-  accounts      Account[]
-  sessions      Session[]
-  memos         Memo[]
+    id        String    @id @default(uuid())
+    name      String?
+    email     String    @unique
+    createdAt DateTime  @default(now())
+    // relation fields
+    accounts  Account[]
+    sessions  Session[]
+    memos     Memo[]
 }
 
-/* Stock model (based on provided CSV columns) */
+/**
+ * Stock model (based on provided CSV columns)
+ */
 model Stock {
-  // primary key: stock code (string to allow leading zeros if any)
-  code            String   @id
+    // primary key: stock code (string to allow leading zeros if any)
+    code String @id
 
-  // basic info
-  name            String
-  marketSegment   String?                      // 市場・商品区分
-  industry33Code  String?
-  industry33Name  String?
-  industry17Code  String?
-  industry17Name  String?
-  scaleCode       String?
-  scaleName       String?
-  listedDate      DateTime?
-  rawCsv          Json?    @db.JsonB
-  createdAt       DateTime @default(now())
+    // basic info
+    name           String
+    marketSegment  String? // 市場・商品区分
+    industry33Code String?
+    industry33Name String?
+    industry17Code String?
+    industry17Name String?
+    scaleCode      String?
+    scaleName      String?
+    listedDate     DateTime?
+    rawCsv         Json?     @db.JsonB
+    createdAt      DateTime  @default(now())
 
-  // relation
-  memos           Memo[]
+    // relation
+    memos Memo[]
 }
 
-/* Memo model */
+/**
+ * Memo model
+ */
 model Memo {
-  id         String    @id @default(uuid())
-  userId     String
-  stockCode  String
-  title      String?
-  content    String
-  tags       String[]  @default([])
-  pinned     Boolean   @default(false)
-  visibility String    @default("private")
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+    id         String   @id @default(uuid())
+    userId     String
+    stockCode  String
+    title      String?
+    content    String
+    tags       String[] @default([])
+    pinned     Boolean  @default(false)
+    visibility String   @default("private")
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 
-  user   User  @relation(fields: [userId], references: [id])
-  stock  Stock @relation(fields: [stockCode], references: [code])
+    user  User  @relation(fields: [userId], references: [id])
+    stock Stock @relation(fields: [stockCode], references: [code])
 
-  @@index([userId])
-  @@index([stockCode])
+    @@index([userId])
+    @@index([stockCode])
 }
