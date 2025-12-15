@@ -7,57 +7,131 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String?
-  email     String   @unique
-  createdAt DateTime @default(now())
-  memos     Memo[]
+// ===========================================
+// NextAuth.js 認証関連モデル
+// ===========================================
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ===========================================
+// ユーザーモデル（NextAuth.js対応）
+// ===========================================
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts Account[]
+  sessions Session[]
+  memos    Memo[]
+}
+
+// ===========================================
+// 株式情報モデル
+// ===========================================
 
 model Stock {
   // 主キーは銘柄コード（例: "1301"）
-  code            String   @id
+  code String @id
 
   // 基本情報
-  name            String                       // 銘柄名
-  marketSegment   String?                      // 市場・商品区分（例: "プライム（内国株式）", "ETF・ETN"）
-  
+  name          String  // 銘柄名
+  marketSegment String? // 市場・商品区分（例: "プライム（内国株式）", "ETF・ETN"）
+
   // 業種（33/17分類）
-  industry33Code  String?                      // 33業種コード
-  industry33Name  String?                      // 33業種区分（33業種の名前）
-  industry17Code  String?                      // 17業種コード
-  industry17Name  String?                      // 17業種区分（17業種の名前）
+  industry33Code String? // 33業種コード
+  industry33Name String? // 33業種区分（33業種の名前）
+  industry17Code String? // 17業種コード
+  industry17Name String? // 17業種区分（17業種の名前）
 
   // 規模
-  scaleCode       String?                      // 規模コード
-  scaleName       String?                      // 規模区分（例: "TOPIX Small 2"）
+  scaleCode String? // 規模コード
+  scaleName String? // 規模区分（例: "TOPIX Small 2"）
 
   // CSVの「日付」列を格納（元データの基準日や上場日などに使える）
-  // CSVでは "20250829" のような整数形式でした。取り込み時に Date に変換してください。
-  listedDate      DateTime?
+  listedDate DateTime?
 
   // 元行を丸ごと保存（将来のカラム追加に柔軟に対応するため）
-  rawCsv          Json?    @db.JsonB
+  rawCsv Json? @db.JsonB
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  // relation
-  memos           Memo[]
+  // Relations
+  memos Memo[]
+
+  // Indexes
+  @@index([name])
+  @@index([industry33Code])
+  @@index([marketSegment])
 }
 
+// ===========================================
+// メモモデル
+// ===========================================
+
 model Memo {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   userId     String
   stockCode  String
   title      String?
-  content    String
-  tags       String[]  @default([])
-  pinned     Boolean   @default(false)
-  visibility String    @default("private")
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  content    String   @db.Text
+  tags       String[] @default([])
+  pinned     Boolean  @default(false)
+  visibility String   @default("private") // "private" | "public"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  user   User  @relation(fields: [userId], references: [id])
-  stock  Stock @relation(fields: [stockCode], references: [code])
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stock Stock @relation(fields: [stockCode], references: [code])
+
+  // Indexes
+  @@index([userId])
+  @@index([stockCode])
+  @@index([createdAt])
+  @@index([pinned])
 }
+

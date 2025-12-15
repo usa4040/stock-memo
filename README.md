@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stock Memo 📈
 
-## Getting Started
+株式投資アイデアを記録・整理するためのメモアプリケーションです。
 
-First, run the development server:
+## 技術スタック
+
+- **Frontend**: Next.js 15 (App Router) + React 19
+- **Styling**: Tailwind CSS 4
+- **Database**: PostgreSQL + Prisma ORM
+- **Authentication**: NextAuth.js
+- **Language**: TypeScript
+
+## セットアップ
+
+### 1. 前提条件
+
+- Node.js 18+
+- Docker & Docker Compose（データベース用）
+
+### 2. 環境変数の設定
+
+```bash
+cp .env.example .env
+```
+
+`.env` ファイルを編集して、必要な値を設定してください。
+
+### 3. 依存関係のインストール
+
+```bash
+npm install
+```
+
+### 4. データベースの起動
+
+```bash
+docker-compose up -d
+```
+
+### 5. データベースのマイグレーション
+
+```bash
+npm run db:migrate
+```
+
+### 6. 銘柄データのシード（オプション）
+
+```bash
+npm run db:seed
+```
+
+### 7. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) でアプリにアクセスできます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 利用可能なスクリプト
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| コマンド | 説明 |
+|----------|------|
+| `npm run dev` | 開発サーバーを起動 |
+| `npm run build` | プロダクションビルドを作成 |
+| `npm run start` | プロダクションサーバーを起動 |
+| `npm run lint` | ESLintでコードをチェック |
+| `npm run db:migrate` | Prismaマイグレーションを実行 |
+| `npm run db:push` | スキーマをDBに反映（マイグレーションなし） |
+| `npm run db:seed` | 銘柄データをインポート |
+| `npm run db:studio` | Prisma Studioを起動 |
+| `npm run db:generate` | Prisma Clientを生成 |
+| `npm run db:reset` | DBをリセット |
 
-## Learn More
+## プロジェクト構造
 
-To learn more about Next.js, take a look at the following resources:
+```
+stock-memo/
+├── app/                    # Next.js App Router
+│   ├── api/               # API Routes
+│   │   ├── auth/          # NextAuth.js 認証
+│   │   ├── memos/         # メモ CRUD API
+│   │   └── stocks/        # 銘柄 API
+│   ├── globals.css        # グローバルスタイル
+│   ├── layout.tsx         # ルートレイアウト
+│   └── page.tsx           # ホームページ
+├── components/            # React コンポーネント
+├── lib/                   # ユーティリティ
+│   └── prisma.ts         # Prisma クライアント
+├── prisma/               # Prisma 設定
+│   └── schema.prisma     # データベーススキーマ
+├── scripts/              # スクリプト
+├── types/                # 型定義
+└── data/                 # CSVデータ
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 主な機能
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 🔐 **認証**: メールアドレスで簡単ログイン
+- 📝 **メモ管理**: 銘柄ごとにメモを作成・編集・削除
+- 🏷️ **タグ機能**: メモにタグを付けて整理
+- 📌 **ピン留め**: 重要なメモを上部に固定
+- 🔒 **公開設定**: メモを非公開または公開に設定
 
-## Deploy on Vercel
+## API エンドポイント
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 銘柄 API
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GET /api/stocks` - 銘柄一覧（検索・ページネーション対応）
+- `GET /api/stocks/[code]` - 銘柄詳細
+
+### メモ API（認証必須）
+
+- `GET /api/memos` - メモ一覧
+- `POST /api/memos` - メモ作成
+- `GET /api/memos/[id]` - メモ詳細
+- `PATCH /api/memos/[id]` - メモ更新
+- `DELETE /api/memos/[id]` - メモ削除
+
+## ライセンス
+
+MIT
