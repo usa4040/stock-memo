@@ -183,16 +183,20 @@ export default function MemosPage() {
                                 </div>
 
                                 {memo.title && (
-                                    <h3 style={{ fontWeight: "600", marginBottom: "0.5rem" }}>
-                                        {memo.title}
-                                    </h3>
+                                    <Link href={`/memos/${memo.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                        <h3 style={{ fontWeight: "600", marginBottom: "0.5rem", cursor: "pointer" }}>
+                                            {memo.title}
+                                        </h3>
+                                    </Link>
                                 )}
 
-                                <p style={{ color: "var(--foreground-secondary)", marginBottom: "1rem", lineHeight: "1.6" }}>
-                                    {memo.content.length > 150
-                                        ? memo.content.slice(0, 150) + "..."
-                                        : memo.content}
-                                </p>
+                                <Link href={`/memos/${memo.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                    <p style={{ color: "var(--foreground-secondary)", marginBottom: "1rem", lineHeight: "1.6", cursor: "pointer" }}>
+                                        {memo.content.length > 150
+                                            ? memo.content.slice(0, 150) + "..."
+                                            : memo.content}
+                                    </p>
+                                </Link>
 
                                 {memo.tags.length > 0 && (
                                     <div className="tag-group" style={{ marginBottom: "1rem" }}>
