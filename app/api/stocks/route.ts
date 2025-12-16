@@ -1,49 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { SearchStocksUseCase } from "@/application";
+import { PrismaStockRepository } from "@/infrastructure";
+
+// リポジトリのインスタンス
+const stockRepository = new PrismaStockRepository(prisma);
 
 // GET /api/stocks - 銘柄一覧を取得
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
-        const query = searchParams.get("q") || "";
+        const query = searchParams.get("q") || undefined;
         const page = parseInt(searchParams.get("page") || "1");
         const limit = parseInt(searchParams.get("limit") || "20");
-        const skip = (page - 1) * limit;
 
-        const where = query
-            ? {
-                OR: [
-                    { code: { contains: query } },
-                    { name: { contains: query, mode: "insensitive" as const } },
-                ],
-            }
-            : {};
-
-        const [stocks, total] = await Promise.all([
-            prisma.stock.findMany({
-                where,
-                skip,
-                take: limit,
-                orderBy: { code: "asc" },
-                select: {
-                    code: true,
-                    name: true,
-                    marketSegment: true,
-                    industry33Name: true,
-                    scaleName: true,
-                },
-            }),
-            prisma.stock.count({ where }),
-        ]);
+        // ユースケースを使用
+        const useCase = new SearchStocksUseCase(stockRepository);
+        const result = await useCase.execute({
+            query,
+            page,
+            limit,
+        });
 
         return NextResponse.json({
-            data: stocks,
-            pagination: {
-                page,
-                limit,
-                total,
-                totalPages: Math.ceil(total / limit),
-            },
+            data: result.stocks.map((s) => s.toPrimitive()),
+            pagination: result.pagination,
         });
     } catch (error) {
         console.error("Error fetching stocks:", error);

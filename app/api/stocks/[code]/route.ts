@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { GetStockUseCase } from "@/application";
+import { PrismaStockRepository } from "@/infrastructure";
+
+// リポジトリのインスタンス
+const stockRepository = new PrismaStockRepository(prisma);
 
 // GET /api/stocks/[code] - 銘柄詳細を取得
 export async function GET(
@@ -9,11 +14,19 @@ export async function GET(
     try {
         const { code } = await params;
 
-        const stock = await prisma.stock.findUnique({
-            where: { code },
-            include: {
-                memos: {
-                    where: { visibility: "public" },
+        // ユースケースを使用
+        const useCase = new GetStockUseCase(stockRepository);
+
+        try {
+            const stock = await useCase.execute({ code });
+
+            // 公開メモと統計情報を追加で取得
+            const [publicMemos, memoCount] = await Promise.all([
+                prisma.memo.findMany({
+                    where: {
+                        stockCode: code,
+                        visibility: "public",
+                    },
                     orderBy: { createdAt: "desc" },
                     take: 10,
                     select: {
@@ -29,21 +42,24 @@ export async function GET(
                             },
                         },
                     },
-                },
-                _count: {
-                    select: { memos: true },
-                },
-            },
-        });
+                }),
+                prisma.memo.count({
+                    where: { stockCode: code },
+                }),
+            ]);
 
-        if (!stock) {
-            return NextResponse.json(
-                { error: "銘柄が見つかりません" },
-                { status: 404 }
-            );
+            return NextResponse.json({
+                ...stock.toPrimitive(),
+                memos: publicMemos,
+                _count: { memos: memoCount },
+            });
+        } catch (domainError) {
+            const message = (domainError as Error).message;
+            if (message === "銘柄が見つかりません") {
+                return NextResponse.json({ error: message }, { status: 404 });
+            }
+            throw domainError;
         }
-
-        return NextResponse.json(stock);
     } catch (error) {
         console.error("Error fetching stock:", error);
         return NextResponse.json(

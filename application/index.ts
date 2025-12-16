@@ -10,4 +10,9 @@ export {
     type GetMemoInput,
     ListUserMemosUseCase,
     type ListUserMemosInput,
+    GetStockUseCase,
+    type GetStockInput,
+    SearchStocksUseCase,
+    type SearchStocksInput,
 } from "./use-cases";
+
