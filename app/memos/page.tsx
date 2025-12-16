@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ConfirmModal from "@/components/confirm-modal";
 
 interface Memo {
     id: string;
@@ -38,6 +39,8 @@ export default function MemosPage() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
+    const [deleteTarget, setDeleteTarget] = useState<Memo | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         if (status === "loading") return;
@@ -47,6 +50,7 @@ export default function MemosPage() {
         }
         fetchMemos();
     }, [page, session, status]);
+
 
     const fetchMemos = async () => {
         setLoading(true);
@@ -68,14 +72,24 @@ export default function MemosPage() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("このメモを削除しますか？")) return;
+    const openDeleteModal = (memo: Memo) => {
+        setDeleteTarget(memo);
+    };
 
+    const closeDeleteModal = () => {
+        setDeleteTarget(null);
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteTarget) return;
+
+        setIsDeleting(true);
         try {
-            const res = await fetch(`/api/memos/${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/memos/${deleteTarget.id}`, { method: "DELETE" });
             if (res.ok) {
-                setMemos(memos.filter((m) => m.id !== id));
+                setMemos(memos.filter((m) => m.id !== deleteTarget.id));
                 setTotal(total - 1);
+                closeDeleteModal();
             } else {
                 const data = await res.json();
                 alert(data.error || "削除に失敗しました");
@@ -83,6 +97,8 @@ export default function MemosPage() {
         } catch (error) {
             console.error("Error deleting memo:", error);
             alert("削除に失敗しました。ネットワークエラーが発生しました。");
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -206,7 +222,7 @@ export default function MemosPage() {
                                             編集
                                         </Link>
                                         <button
-                                            onClick={() => handleDelete(memo.id)}
+                                            onClick={() => openDeleteModal(memo)}
                                             className="btn btn-danger"
                                             style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
                                         >
@@ -242,6 +258,18 @@ export default function MemosPage() {
                     </button>
                 </div>
             )}
+
+            {/* 削除確認モーダル */}
+            <ConfirmModal
+                isOpen={deleteTarget !== null}
+                title="メモを削除"
+                message={`「${deleteTarget?.stock.name}」のメモを削除しますか？この操作は取り消せません。`}
+                confirmText={isDeleting ? "削除中..." : "削除する"}
+                cancelText="キャンセル"
+                confirmButtonClass="btn-danger"
+                onConfirm={confirmDelete}
+                onCancel={closeDeleteModal}
+            />
         </div>
     );
 }
