@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { z } from "zod";
+import { authOptions } from "@/lib/auth";
+import {
+    CreateMemoUseCase,
+    ListUserMemosUseCase,
+} from "@/application";
+import { PrismaMemoRepository } from "@/infrastructure";
 
-// メモ作成のバリデーションスキーマ
-const createMemoSchema = z.object({
-    stockCode: z.string().min(1, "銘柄コードは必須です"),
-    title: z.string().max(200, "タイトルは200文字以内で入力してください").optional(),
-    content: z.string().min(1, "内容は必須です").max(10000, "内容は10000文字以内で入力してください"),
-    tags: z.array(z.string()).max(10, "タグは最大10個までです").optional(),
-    visibility: z.enum(["private", "public"]).optional(),
-});
+// リポジトリのインスタンス
+const memoRepository = new PrismaMemoRepository(prisma);
 
 // GET /api/memos - メモ一覧を取得（認証必要）
 export async function GET(request: NextRequest) {
@@ -23,50 +21,35 @@ export async function GET(request: NextRequest) {
         }
 
         const { searchParams } = new URL(request.url);
-        const stockCode = searchParams.get("stockCode");
         const page = parseInt(searchParams.get("page") || "1");
         const limit = parseInt(searchParams.get("limit") || "20");
-        const pinned = searchParams.get("pinned");
-        const skip = (page - 1) * limit;
 
-        const where: Record<string, unknown> = {
+        // ユースケースを使用
+        const useCase = new ListUserMemosUseCase(memoRepository);
+        const result = await useCase.execute({
             userId: session.user.id,
-        };
+            page,
+            limit,
+        });
 
-        if (stockCode) {
-            where.stockCode = stockCode;
-        }
-
-        if (pinned === "true") {
-            where.pinned = true;
-        }
-
-        const [memos, total] = await Promise.all([
-            prisma.memo.findMany({
-                where,
-                skip,
-                take: limit,
-                orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],
-                include: {
-                    stock: {
-                        select: {
-                            code: true,
-                            name: true,
-                        },
+        // 銘柄情報を追加で取得（表示用）
+        const memoIds = result.memos.map((m) => m.id);
+        const memosWithStock = await prisma.memo.findMany({
+            where: { id: { in: memoIds } },
+            include: {
+                stock: {
+                    select: {
+                        code: true,
+                        name: true,
                     },
                 },
-            }),
-            prisma.memo.count({ where }),
-        ]);
+            },
+            orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],
+        });
 
         return NextResponse.json({
-            data: memos,
-            pagination: {
-                page,
-                limit,
-                total,
-                totalPages: Math.ceil(total / limit),
-            },
+            data: memosWithStock,
+            pagination: result.pagination,
         });
     } catch (error) {
         console.error("Error fetching memos:", error);
@@ -87,20 +70,10 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const validationResult = createMemoSchema.safeParse(body);
-
-        if (!validationResult.success) {
-            return NextResponse.json(
-                { error: "入力内容に問題があります", details: validationResult.error.flatten() },
-                { status: 400 }
-            );
-        }
-
-        const { stockCode, title, content, tags, visibility } = validationResult.data;
 
         // 銘柄の存在確認
         const stock = await prisma.stock.findUnique({
-            where: { code: stockCode },
+            where: { code: body.stockCode },
         });
 
         if (!stock) {
@@ -110,26 +83,40 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const memo = await prisma.memo.create({
-            data: {
+        // ユースケースを使用（バリデーションはドメイン層で実行）
+        const useCase = new CreateMemoUseCase(memoRepository);
+
+        try {
+            const memo = await useCase.execute({
                 userId: session.user.id,
-                stockCode,
-                title,
-                content,
-                tags: tags || [],
-                visibility: visibility || "private",
-            },
-            include: {
-                stock: {
-                    select: {
-                        code: true,
-                        name: true,
+                stockCode: body.stockCode,
+                content: body.content,
+                title: body.title,
+                tags: body.tags,
+                visibility: body.visibility,
+            });
+
+            // 銘柄情報を含めて返す
+            const memoWithStock = await prisma.memo.findUnique({
+                where: { id: memo.id },
+                include: {
+                    stock: {
+                        select: {
+                            code: true,
+                            name: true,
+                        },
                     },
                 },
-            },
-        });
+            });
 
-        return NextResponse.json(memo, { status: 201 });
+            return NextResponse.json(memoWithStock, { status: 201 });
+        } catch (domainError) {
+            // ドメイン層のバリデーションエラー
+            return NextResponse.json(
+                { error: (domainError as Error).message },
+                { status: 400 }
+            );
+        }
     } catch (error) {
         console.error("Error creating memo:", error);
         return NextResponse.json(

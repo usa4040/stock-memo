@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/lib/prisma";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { z } from "zod";
+import { authOptions } from "@/lib/auth";
+import {
+    GetMemoUseCase,
+    UpdateMemoUseCase,
+    DeleteMemoUseCase,
+} from "@/application";
+import { PrismaMemoRepository } from "@/infrastructure";
 
-// メモ更新のバリデーションスキーマ
-const updateMemoSchema = z.object({
-    title: z.string().max(200, "タイトルは200文字以内で入力してください").optional(),
-    content: z.string().min(1, "内容は必須です").max(10000, "内容は10000文字以内で入力してください").optional(),
-    tags: z.array(z.string()).max(10, "タグは最大10個までです").optional(),
-    pinned: z.boolean().optional(),
-    visibility: z.enum(["private", "public"]).optional(),
-});
+// リポジトリのインスタンス
+const memoRepository = new PrismaMemoRepository(prisma);
 
 // GET /api/memos/[id] - メモ詳細を取得
 export async function GET(
@@ -22,36 +21,47 @@ export async function GET(
         const session = await getServerSession(authOptions);
         const { id } = await params;
 
-        const memo = await prisma.memo.findUnique({
-            where: { id },
-            include: {
-                stock: {
-                    select: {
-                        code: true,
-                        name: true,
-                        marketSegment: true,
-                        industry33Name: true,
+        // ユースケースを使用（権限チェックはドメイン層で実行）
+        const useCase = new GetMemoUseCase(memoRepository);
+
+        try {
+            const memo = await useCase.execute({
+                memoId: id,
+                userId: session?.user?.id || null,
+            });
+
+            // 銘柄・ユーザー情報を含めて返す
+            const memoWithDetails = await prisma.memo.findUnique({
+                where: { id: memo.id },
+                include: {
+                    stock: {
+                        select: {
+                            code: true,
+                            name: true,
+                            marketSegment: true,
+                            industry33Name: true,
+                        },
+                    },
+                    user: {
+                        select: {
+                            name: true,
+                            image: true,
+                        },
                     },
                 },
-                user: {
-                    select: {
-                        name: true,
-                        image: true,
-                    },
-                },
-            },
-        });
+            });
 
-        if (!memo) {
-            return NextResponse.json({ error: "メモが見つかりません" }, { status: 404 });
+            return NextResponse.json(memoWithDetails);
+        } catch (domainError) {
+            const message = (domainError as Error).message;
+            if (message === "メモが見つかりません") {
+                return NextResponse.json({ error: message }, { status: 404 });
+            }
+            if (message === "アクセス権限がありません") {
+                return NextResponse.json({ error: message }, { status: 403 });
+            }
+            throw domainError;
         }
-
-        // 非公開メモは本人のみ閲覧可能
-        if (memo.visibility === "private" && memo.userId !== session?.user?.id) {
-            return NextResponse.json({ error: "アクセス権限がありません" }, { status: 403 });
-        }
-
-        return NextResponse.json(memo);
     } catch (error) {
         console.error("Error fetching memo:", error);
         return NextResponse.json(
@@ -74,44 +84,47 @@ export async function PATCH(
         }
 
         const { id } = await params;
-
-        // 既存メモの確認
-        const existingMemo = await prisma.memo.findUnique({
-            where: { id },
-        });
-
-        if (!existingMemo) {
-            return NextResponse.json({ error: "メモが見つかりません" }, { status: 404 });
-        }
-
-        if (existingMemo.userId !== session.user.id) {
-            return NextResponse.json({ error: "編集権限がありません" }, { status: 403 });
-        }
-
         const body = await request.json();
-        const validationResult = updateMemoSchema.safeParse(body);
 
-        if (!validationResult.success) {
-            return NextResponse.json(
-                { error: "入力内容に問題があります", details: validationResult.error.flatten() },
-                { status: 400 }
-            );
-        }
+        // ユースケースを使用（権限チェック・バリデーションはドメイン層で実行）
+        const useCase = new UpdateMemoUseCase(memoRepository);
 
-        const memo = await prisma.memo.update({
-            where: { id },
-            data: validationResult.data,
-            include: {
-                stock: {
-                    select: {
-                        code: true,
-                        name: true,
+        try {
+            const memo = await useCase.execute({
+                memoId: id,
+                userId: session.user.id,
+                title: body.title,
+                content: body.content,
+                tags: body.tags,
+                pinned: body.pinned,
+                visibility: body.visibility,
+            });
+
+            // 銘柄情報を含めて返す
+            const memoWithStock = await prisma.memo.findUnique({
+                where: { id: memo.id },
+                include: {
+                    stock: {
+                        select: {
+                            code: true,
+                            name: true,
+                        },
                     },
                 },
-            },
-        });
+            });
 
-        return NextResponse.json(memo);
+            return NextResponse.json(memoWithStock);
+        } catch (domainError) {
+            const message = (domainError as Error).message;
+            if (message === "メモが見つかりません") {
+                return NextResponse.json({ error: message }, { status: 404 });
+            }
+            if (message === "編集権限がありません") {
+                return NextResponse.json({ error: message }, { status: 403 });
+            }
+            // バリデーションエラー
+            return NextResponse.json({ error: message }, { status: 400 });
+        }
     } catch (error) {
         console.error("Error updating memo:", error);
         return NextResponse.json(
@@ -135,23 +148,26 @@ export async function DELETE(
 
         const { id } = await params;
 
-        const existingMemo = await prisma.memo.findUnique({
-            where: { id },
-        });
+        // ユースケースを使用（権限チェックはドメイン層で実行）
+        const useCase = new DeleteMemoUseCase(memoRepository);
 
-        if (!existingMemo) {
-            return NextResponse.json({ error: "メモが見つかりません" }, { status: 404 });
+        try {
+            await useCase.execute({
+                memoId: id,
+                userId: session.user.id,
+            });
+
+            return NextResponse.json({ message: "メモを削除しました" });
+        } catch (domainError) {
+            const message = (domainError as Error).message;
+            if (message === "メモが見つかりません") {
+                return NextResponse.json({ error: message }, { status: 404 });
+            }
+            if (message === "削除権限がありません") {
+                return NextResponse.json({ error: message }, { status: 403 });
+            }
+            throw domainError;
         }
-
-        if (existingMemo.userId !== session.user.id) {
-            return NextResponse.json({ error: "削除権限がありません" }, { status: 403 });
-        }
-
-        await prisma.memo.delete({
-            where: { id },
-        });
-
-        return NextResponse.json({ message: "メモを削除しました" });
     } catch (error) {
         console.error("Error deleting memo:", error);
         return NextResponse.json(

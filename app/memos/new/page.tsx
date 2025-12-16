@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -10,7 +10,7 @@ interface Stock {
     name: string;
 }
 
-export default function NewMemoPage() {
+function NewMemoContent() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -32,6 +32,7 @@ export default function NewMemoPage() {
         if (!session) {
             router.push("/api/auth/signin");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session, status]);
 
     useEffect(() => {
@@ -303,5 +304,17 @@ export default function NewMemoPage() {
                 </div>
             </form>
         </div>
+    );
+}
+
+export default function NewMemoPage() {
+    return (
+        <Suspense fallback={
+            <div className="container" style={{ padding: "4rem 1.5rem", textAlign: "center" }}>
+                <div className="loading-spinner" style={{ margin: "0 auto" }} />
+            </div>
+        }>
+            <NewMemoContent />
+        </Suspense>
     );
 }

@@ -49,6 +49,7 @@ export default function MemosPage() {
             return;
         }
         fetchMemos();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, session, status]);
 
 

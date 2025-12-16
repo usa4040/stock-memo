@@ -8,6 +8,7 @@ import ConfirmModal from "@/components/confirm-modal";
 
 interface Memo {
     id: string;
+    userId: string;
     title: string | null;
     content: string;
     tags: string[];
@@ -29,7 +30,7 @@ interface Memo {
 }
 
 export default function MemoDetailPage() {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const router = useRouter();
     const params = useParams();
     const memoId = params.id as string;
@@ -42,6 +43,7 @@ export default function MemoDetailPage() {
 
     useEffect(() => {
         fetchMemo();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [memoId]);
 
     const fetchMemo = async () => {
@@ -105,7 +107,7 @@ export default function MemoDetailPage() {
         }
     };
 
-    const isOwner = session?.user?.id === (memo as any)?.userId;
+    const isOwner = session?.user?.id === memo?.userId;
 
     if (loading) {
         return (
