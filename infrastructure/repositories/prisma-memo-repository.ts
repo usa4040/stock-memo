@@ -167,6 +167,43 @@ export class PrismaMemoRepository implements IMemoRepository {
     }
 
     /**
+     * キーワードでメモを検索
+     */
+    async searchByKeyword(
+        userId: string,
+        keyword: string,
+        options?: { page?: number; limit?: number }
+    ): Promise<{ memos: Memo[]; total: number }> {
+        const page = options?.page || 1;
+        const limit = options?.limit || 20;
+        const skip = (page - 1) * limit;
+
+        // タイトルまたは内容にキーワードを含むメモを検索
+        const where = {
+            userId,
+            OR: [
+                { title: { contains: keyword } },
+                { content: { contains: keyword } },
+            ],
+        };
+
+        const [data, total] = await Promise.all([
+            this.prisma.memo.findMany({
+                where,
+                orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],
+                skip,
+                take: limit,
+            }),
+            this.prisma.memo.count({ where }),
+        ]);
+
+        return {
+            memos: data.map((d) => this.toDomain(d)),
+            total,
+        };
+    }
+
+    /**
      * Prismaのデータ → ドメインモデルに変換
      */
     private toDomain(data: {

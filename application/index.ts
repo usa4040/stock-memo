@@ -16,5 +16,7 @@ export {
     type SearchStocksInput,
     FilterMemosByTagsUseCase,
     type FilterMemosByTagsInput,
+    SearchMemosUseCase,
+    type SearchMemosInput,
 } from "./use-cases";
 

@@ -6,6 +6,7 @@ import {
     CreateMemoUseCase,
     ListUserMemosUseCase,
     FilterMemosByTagsUseCase,
+    SearchMemosUseCase,
 } from "@/application";
 import { PrismaMemoRepository } from "@/infrastructure";
 
@@ -25,6 +26,33 @@ export async function GET(request: NextRequest) {
         const page = parseInt(searchParams.get("page") || "1");
         const limit = parseInt(searchParams.get("limit") || "20");
         const tagsParam = searchParams.get("tags");
+        const keyword = searchParams.get("q");
+
+        // キーワードで検索する場合
+        if (keyword && keyword.trim()) {
+            const searchUseCase = new SearchMemosUseCase(memoRepository);
+            const result = await searchUseCase.execute({
+                userId: session.user.id,
+                keyword,
+                page,
+                limit,
+            });
+
+            // 銘柄情報を追加で取得
+            const memoIds = result.memos.map((m) => m.id);
+            const memosWithStock = await prisma.memo.findMany({
+                where: { id: { in: memoIds } },
+                include: {
+                    stock: { select: { code: true, name: true } },
+                },
+                orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],
+            });
+
+            return NextResponse.json({
+                data: memosWithStock,
+                pagination: result.pagination,
+            });
+        }
 
         // タグでフィルタリングする場合
         if (tagsParam) {

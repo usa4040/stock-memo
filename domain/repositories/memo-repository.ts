@@ -69,4 +69,19 @@ export interface IMemoRepository {
         memos: Memo[];
         total: number;
     }>;
+
+    /**
+     * キーワードでメモを検索
+     */
+    searchByKeyword(
+        userId: string,
+        keyword: string,
+        options?: {
+            page?: number;
+            limit?: number;
+        }
+    ): Promise<{
+        memos: Memo[];
+        total: number;
+    }>;
 }
