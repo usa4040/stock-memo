@@ -5,4 +5,5 @@ export { GetMemoUseCase, type GetMemoInput } from "./get-memo";
 export { ListUserMemosUseCase, type ListUserMemosInput } from "./list-user-memos";
 export { GetStockUseCase, type GetStockInput } from "./get-stock";
 export { SearchStocksUseCase, type SearchStocksInput } from "./search-stocks";
+export { FilterMemosByTagsUseCase, type FilterMemosByTagsInput } from "./filter-memos-by-tags";
 

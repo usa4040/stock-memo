@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import {
     CreateMemoUseCase,
     ListUserMemosUseCase,
+    FilterMemosByTagsUseCase,
 } from "@/application";
 import { PrismaMemoRepository } from "@/infrastructure";
 
@@ -23,8 +24,39 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const page = parseInt(searchParams.get("page") || "1");
         const limit = parseInt(searchParams.get("limit") || "20");
+        const tagsParam = searchParams.get("tags");
 
-        // ユースケースを使用
+        // タグでフィルタリングする場合
+        if (tagsParam) {
+            const tags = tagsParam.split(",").map((t) => t.trim()).filter(Boolean);
+
+            if (tags.length > 0) {
+                const filterUseCase = new FilterMemosByTagsUseCase(memoRepository);
+                const result = await filterUseCase.execute({
+                    userId: session.user.id,
+                    tags,
+                    page,
+                    limit,
+                });
+
+                // 銘柄情報を追加で取得
+                const memoIds = result.memos.map((m) => m.id);
+                const memosWithStock = await prisma.memo.findMany({
+                    where: { id: { in: memoIds } },
+                    include: {
+                        stock: { select: { code: true, name: true } },
+                    },
+                    orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],
+                });
+
+                return NextResponse.json({
+                    data: memosWithStock,
+                    pagination: result.pagination,
+                });
+            }
+        }
+
+        // 通常の一覧取得
         const useCase = new ListUserMemosUseCase(memoRepository);
         const result = await useCase.execute({
             userId: session.user.id,

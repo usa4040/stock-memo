@@ -54,4 +54,19 @@ export interface IMemoRepository {
      * ユーザーのメモ数を取得
      */
     countByUserId(userId: string): Promise<number>;
+
+    /**
+     * ユーザーのメモをタグでフィルタリングして取得
+     */
+    findByUserIdAndTags(
+        userId: string,
+        tags: string[],
+        options?: {
+            page?: number;
+            limit?: number;
+        }
+    ): Promise<{
+        memos: Memo[];
+        total: number;
+    }>;
 }
