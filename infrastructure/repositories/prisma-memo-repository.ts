@@ -178,12 +178,14 @@ export class PrismaMemoRepository implements IMemoRepository {
         const limit = options?.limit || 20;
         const skip = (page - 1) * limit;
 
-        // タイトルまたは内容にキーワードを含むメモを検索
+        // タイトル、内容、銘柄名、銘柄コードにキーワードを含むメモを検索
         const where = {
             userId,
             OR: [
                 { title: { contains: keyword } },
                 { content: { contains: keyword } },
+                { stock: { name: { contains: keyword } } },
+                { stock: { code: { contains: keyword } } },
             ],
         };
 

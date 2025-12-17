@@ -42,6 +42,12 @@ export default function MemosPage() {
     const [deleteTarget, setDeleteTarget] = useState<Memo | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    // 検索・フィルタ用のstate
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeSearch, setActiveSearch] = useState("");
+    const [selectedTag, setSelectedTag] = useState("");
+    const [allTags, setAllTags] = useState<string[]>([]);
+
     useEffect(() => {
         if (status === "loading") return;
         if (!session) {
@@ -50,7 +56,7 @@ export default function MemosPage() {
         }
         fetchMemos();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, session, status]);
+    }, [page, session, status, activeSearch, selectedTag]);
 
 
     const fetchMemos = async () => {
@@ -60,17 +66,53 @@ export default function MemosPage() {
                 page: page.toString(),
                 limit: "20",
             });
+
+            // キーワード検索
+            if (activeSearch.trim()) {
+                params.set("q", activeSearch.trim());
+            }
+
+            // タグフィルタリング
+            if (selectedTag) {
+                params.set("tags", selectedTag);
+            }
+
             const res = await fetch(`/api/memos?${params}`);
             if (!res.ok) throw new Error("Failed to fetch memos");
             const data: MemosResponse = await res.json();
             setMemos(data.data);
             setTotalPages(data.pagination.totalPages);
             setTotal(data.pagination.total);
+
+            // 全メモからタグを収集（初回のみ）
+            if (!activeSearch && !selectedTag && allTags.length === 0) {
+                const tags = new Set<string>();
+                data.data.forEach((memo) => memo.tags.forEach((tag) => tags.add(tag)));
+                setAllTags(Array.from(tags).sort());
+            }
         } catch (error) {
             console.error("Error fetching memos:", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        setPage(1);
+        setActiveSearch(searchQuery);
+    };
+
+    const handleClearSearch = () => {
+        setSearchQuery("");
+        setActiveSearch("");
+        setSelectedTag("");
+        setPage(1);
+    };
+
+    const handleTagSelect = (tag: string) => {
+        setSelectedTag(tag === selectedTag ? "" : tag);
+        setPage(1);
     };
 
     const openDeleteModal = (memo: Memo) => {
@@ -142,6 +184,66 @@ export default function MemosPage() {
                     ＋ 新規メモ
                 </Link>
             </div>
+
+            {/* 検索・フィルタ */}
+            <div className="card" style={{ marginBottom: "1.5rem", padding: "1rem" }}>
+                <form onSubmit={handleSearch} style={{ display: "flex", gap: "0.5rem", marginBottom: allTags.length > 0 ? "1rem" : 0 }}>
+                    <input
+                        type="text"
+                        className="input"
+                        placeholder="キーワードで検索..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{ flex: 1 }}
+                    />
+                    <button type="submit" className="btn btn-primary">
+                        🔍 検索
+                    </button>
+                    {(activeSearch || selectedTag) && (
+                        <button type="button" className="btn btn-outline" onClick={handleClearSearch}>
+                            ✕ クリア
+                        </button>
+                    )}
+                </form>
+
+                {/* タグフィルタ */}
+                {allTags.length > 0 && (
+                    <div>
+                        <span style={{ fontSize: "0.875rem", color: "var(--foreground-secondary)", marginRight: "0.5rem" }}>
+                            タグ:
+                        </span>
+                        <div style={{ display: "inline-flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                            {allTags.map((tag) => (
+                                <button
+                                    key={tag}
+                                    type="button"
+                                    onClick={() => handleTagSelect(tag)}
+                                    className="tag"
+                                    style={{
+                                        cursor: "pointer",
+                                        background: selectedTag === tag ? "var(--color-primary)" : "var(--background-secondary)",
+                                        color: selectedTag === tag ? "white" : "var(--foreground-secondary)",
+                                        border: "none",
+                                    }}
+                                >
+                                    {tag}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* 検索結果表示 */}
+            {(activeSearch || selectedTag) && (
+                <div style={{ marginBottom: "1rem", padding: "0.75rem 1rem", background: "var(--background-secondary)", borderRadius: "var(--radius-md)" }}>
+                    <span style={{ color: "var(--foreground-secondary)" }}>
+                        {activeSearch && `「${activeSearch}」の検索結果`}
+                        {activeSearch && selectedTag && " / "}
+                        {selectedTag && `タグ: ${selectedTag}`}
+                    </span>
+                </div>
+            )}
 
             {/* 件数表示 */}
             <p style={{ color: "var(--foreground-secondary)", marginBottom: "1rem" }}>
