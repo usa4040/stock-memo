@@ -18,5 +18,9 @@ export {
     type FilterMemosByTagsInput,
     SearchMemosUseCase,
     type SearchMemosInput,
+    GetDashboardUseCase,
+    type GetDashboardInput,
+    type DashboardOutput,
+    type MemoSummary,
 } from "./use-cases";
 

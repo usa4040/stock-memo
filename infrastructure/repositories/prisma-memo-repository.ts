@@ -233,4 +233,106 @@ export class PrismaMemoRepository implements IMemoRepository {
             updatedAt: data.updatedAt,
         });
     }
+
+    // ========== ダッシュボード用メソッド ==========
+
+    /**
+     * ユーザーのピン留めメモを取得
+     */
+    async findPinnedByUserId(userId: string, limit: number = 5): Promise<Memo[]> {
+        const data = await this.prisma.memo.findMany({
+            where: {
+                userId,
+                pinned: true,
+            },
+            orderBy: { updatedAt: "desc" },
+            take: limit,
+        });
+
+        return data.map((d) => this.toDomain(d));
+    }
+
+    /**
+     * ユーザーの最近更新したメモを取得
+     */
+    async findRecentByUserId(userId: string, limit: number = 5): Promise<Memo[]> {
+        const data = await this.prisma.memo.findMany({
+            where: { userId },
+            orderBy: { updatedAt: "desc" },
+            take: limit,
+        });
+
+        return data.map((d) => this.toDomain(d));
+    }
+
+    /**
+     * ユーザーのタグ統計を取得（使用回数順）
+     */
+    async getTagStatistics(
+        userId: string,
+        limit: number = 10
+    ): Promise<{ tag: string; count: number }[]> {
+        // ユーザーの全メモを取得してタグを集計
+        const memos = await this.prisma.memo.findMany({
+            where: { userId },
+            select: { tags: true },
+        });
+
+        // タグの出現回数をカウント
+        const tagCounts = new Map<string, number>();
+        for (const memo of memos) {
+            for (const tag of memo.tags) {
+                tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+            }
+        }
+
+        // 出現回数順にソートして上位を返す
+        return Array.from(tagCounts.entries())
+            .map(([tag, count]) => ({ tag, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, limit);
+    }
+
+    /**
+     * ユーザーの対象銘柄数を取得
+     */
+    async countUniqueStocksByUserId(userId: string): Promise<number> {
+        const result = await this.prisma.memo.groupBy({
+            by: ["stockCode"],
+            where: { userId },
+        });
+
+        return result.length;
+    }
+
+    /**
+     * ユーザーのタグ数を取得
+     */
+    async countUniqueTagsByUserId(userId: string): Promise<number> {
+        const memos = await this.prisma.memo.findMany({
+            where: { userId },
+            select: { tags: true },
+        });
+
+        const uniqueTags = new Set<string>();
+        for (const memo of memos) {
+            for (const tag of memo.tags) {
+                uniqueTags.add(tag);
+            }
+        }
+
+        return uniqueTags.size;
+    }
+
+    /**
+     * ユーザーのピン留めメモ数を取得
+     */
+    async countPinnedByUserId(userId: string): Promise<number> {
+        return this.prisma.memo.count({
+            where: {
+                userId,
+                pinned: true,
+            },
+        });
+    }
 }

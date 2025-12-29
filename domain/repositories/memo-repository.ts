@@ -84,4 +84,39 @@ export interface IMemoRepository {
         memos: Memo[];
         total: number;
     }>;
+
+    // ========== ダッシュボード用メソッド ==========
+
+    /**
+     * ユーザーのピン留めメモを取得
+     */
+    findPinnedByUserId(userId: string, limit?: number): Promise<Memo[]>;
+
+    /**
+     * ユーザーの最近更新したメモを取得
+     */
+    findRecentByUserId(userId: string, limit?: number): Promise<Memo[]>;
+
+    /**
+     * ユーザーのタグ統計を取得（使用回数順）
+     */
+    getTagStatistics(
+        userId: string,
+        limit?: number
+    ): Promise<{ tag: string; count: number }[]>;
+
+    /**
+     * ユーザーの対象銘柄数を取得
+     */
+    countUniqueStocksByUserId(userId: string): Promise<number>;
+
+    /**
+     * ユーザーのタグ数を取得
+     */
+    countUniqueTagsByUserId(userId: string): Promise<number>;
+
+    /**
+     * ユーザーのピン留めメモ数を取得
+     */
+    countPinnedByUserId(userId: string): Promise<number>;
 }

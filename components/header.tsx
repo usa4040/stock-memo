@@ -19,9 +19,14 @@ export default function Header() {
                         銘柄一覧
                     </Link>
                     {session && (
-                        <Link href="/memos" className="nav-link">
-                            マイメモ
-                        </Link>
+                        <>
+                            <Link href="/dashboard" className="nav-link">
+                                ダッシュボード
+                            </Link>
+                            <Link href="/memos" className="nav-link">
+                                マイメモ
+                            </Link>
+                        </>
                     )}
                 </nav>
 

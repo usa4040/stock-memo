@@ -7,4 +7,4 @@ export { GetStockUseCase, type GetStockInput } from "./get-stock";
 export { SearchStocksUseCase, type SearchStocksInput } from "./search-stocks";
 export { FilterMemosByTagsUseCase, type FilterMemosByTagsInput } from "./filter-memos-by-tags";
 export { SearchMemosUseCase, type SearchMemosInput } from "./search-memos";
-
+export { GetDashboardUseCase, type GetDashboardInput, type DashboardOutput, type MemoSummary } from "./get-dashboard";
