@@ -89,7 +89,12 @@ export default function DashboardPage() {
             ) : dashboard ? (
                 <>
                     {/* 統計カード */}
-                    <div className="grid grid-4" style={{ marginBottom: "2rem" }}>
+                    <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(4, 1fr)",
+                        gap: "1rem",
+                        marginBottom: "2rem"
+                    }}>
                         <StatCard
                             icon="📝"
                             label="総メモ数"
@@ -117,7 +122,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* メインコンテンツ */}
-                    <div className="grid grid-2" style={{ gap: "2rem" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                         {/* ピン留めメモ */}
                         <section>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
@@ -130,7 +135,11 @@ export default function DashboardPage() {
                                     </p>
                                 </div>
                             ) : (
-                                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                                <div style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                                    gap: "1rem"
+                                }}>
                                     {dashboard.pinnedMemos.map((memo) => (
                                         <MemoCard key={memo.id} memo={memo} />
                                     ))}
@@ -156,7 +165,11 @@ export default function DashboardPage() {
                                     </Link>
                                 </div>
                             ) : (
-                                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                                <div style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                                    gap: "1rem"
+                                }}>
                                     {dashboard.recentMemos.map((memo) => (
                                         <MemoCard key={memo.id} memo={memo} />
                                     ))}
