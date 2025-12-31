@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import WatchButton from "@/components/watch-button";
 
 interface Props {
     params: Promise<{ code: string }>;
@@ -83,10 +84,11 @@ export default async function StockDetailPage({ params }: Props) {
             </div>
 
             {/* アクション */}
-            <div style={{ marginBottom: "2rem" }}>
+            <div style={{ marginBottom: "2rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                 <Link href={`/memos/new?stockCode=${stock.code}`} className="btn btn-primary">
                     📝 この銘柄にメモを追加
                 </Link>
+                <WatchButton stockCode={stock.code} />
             </div>
 
             {/* 公開メモ */}

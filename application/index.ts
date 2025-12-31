@@ -22,5 +22,16 @@ export {
     type GetDashboardInput,
     type DashboardOutput,
     type MemoSummary,
+    // ウォッチリスト
+    AddToWatchlistUseCase,
+    type AddToWatchlistInput,
+    RemoveFromWatchlistUseCase,
+    type RemoveFromWatchlistInput,
+    ListWatchlistUseCase,
+    type ListWatchlistInput,
+    type WatchlistOutput,
+    CheckWatchlistUseCase,
+    type CheckWatchlistInput,
+    type CheckWatchlistOutput,
 } from "./use-cases";
 

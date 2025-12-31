@@ -8,3 +8,9 @@ export { SearchStocksUseCase, type SearchStocksInput } from "./search-stocks";
 export { FilterMemosByTagsUseCase, type FilterMemosByTagsInput } from "./filter-memos-by-tags";
 export { SearchMemosUseCase, type SearchMemosInput } from "./search-memos";
 export { GetDashboardUseCase, type GetDashboardInput, type DashboardOutput, type MemoSummary } from "./get-dashboard";
+
+// ウォッチリスト
+export { AddToWatchlistUseCase, type AddToWatchlistInput } from "./add-to-watchlist";
+export { RemoveFromWatchlistUseCase, type RemoveFromWatchlistInput } from "./remove-from-watchlist";
+export { ListWatchlistUseCase, type ListWatchlistInput, type WatchlistOutput } from "./list-watchlist";
+export { CheckWatchlistUseCase, type CheckWatchlistInput, type CheckWatchlistOutput } from "./check-watchlist";

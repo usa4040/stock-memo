@@ -23,6 +23,9 @@ export default function Header() {
                             <Link href="/dashboard" className="nav-link">
                                 ダッシュボード
                             </Link>
+                            <Link href="/watchlist" className="nav-link">
+                                ウォッチリスト
+                            </Link>
                             <Link href="/memos" className="nav-link">
                                 マイメモ
                             </Link>

@@ -64,9 +64,10 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // Relations
-  accounts Account[]
-  sessions Session[]
-  memos    Memo[]
+  accounts       Account[]
+  sessions       Session[]
+  memos          Memo[]
+  watchlistItems WatchlistItem[]
 }
 
 // ===========================================
@@ -100,7 +101,8 @@ model Stock {
   createdAt DateTime @default(now())
 
   // Relations
-  memos Memo[]
+  memos          Memo[]
+  watchlistItems WatchlistItem[]
 
   // Indexes
   @@index([name])
@@ -135,3 +137,23 @@ model Memo {
   @@index([pinned])
 }
 
+// ===========================================
+// ウォッチリストモデル
+// ===========================================
+
+model WatchlistItem {
+  id        String   @id @default(uuid())
+  userId    String
+  stockCode String
+  note      String?  @db.Text // ウォッチ理由のメモ（任意）
+  createdAt DateTime @default(now())
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stock Stock @relation(fields: [stockCode], references: [code])
+
+  // ユーザーは同じ銘柄を重複してウォッチできない
+  @@unique([userId, stockCode])
+  @@index([userId])
+  @@index([stockCode])
+}
