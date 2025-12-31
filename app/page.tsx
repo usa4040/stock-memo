@@ -9,14 +9,14 @@ export default function Home() {
           <h1 className="hero-title">Stock Memo</h1>
           <p className="hero-description">
             あなたの株式投資アイデアを記録・整理するためのメモアプリケーション。
-            銘柄ごとにメモを管理し、投資判断をサポートします。
+            気になる銘柄をウォッチし、投資判断をサポートします。
           </p>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/stocks" className="btn btn-primary" style={{ background: "white", color: "#3b82f6" }}>
-              銘柄を探す
+              📈 銘柄を探す
             </Link>
-            <Link href="/memos" className="btn btn-outline" style={{ borderColor: "white", color: "white" }}>
-              マイメモ
+            <Link href="/dashboard" className="btn btn-outline" style={{ borderColor: "white", color: "white" }}>
+              📊 ダッシュボード
             </Link>
           </div>
         </div>
@@ -28,39 +28,55 @@ export default function Home() {
           <h2 style={{ textAlign: "center", fontSize: "2rem", fontWeight: "700", marginBottom: "3rem" }}>
             主な機能
           </h2>
-          <div className="grid grid-3">
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1.5rem"
+          }}>
             <div className="card">
               <div className="card-body" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📝</div>
-                <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📊</div>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                  ダッシュボード
+                </h3>
+                <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
+                  統計情報、最近のメモ、タグ使用状況を一目で確認
+                </p>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-body" style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>👀</div>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                  ウォッチリスト
+                </h3>
+                <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
+                  気になる銘柄をウォッチして一覧管理
+                </p>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-body" style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📝</div>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
                   銘柄メモ
                 </h3>
-                <p style={{ color: "var(--foreground-secondary)" }}>
-                  銘柄ごとにメモを作成・管理。投資アイデアや分析結果を記録できます。
+                <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
+                  投資アイデアや分析結果を銘柄ごとに記録
                 </p>
               </div>
             </div>
 
             <div className="card">
               <div className="card-body" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🏷️</div>
-                <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🏷️</div>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
                   タグ管理
                 </h3>
-                <p style={{ color: "var(--foreground-secondary)" }}>
-                  タグを使ってメモを整理。テーマや投資スタイルで分類できます。
-                </p>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="card-body" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🔒</div>
-                <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "0.5rem" }}>
-                  プライバシー
-                </h3>
-                <p style={{ color: "var(--foreground-secondary)" }}>
-                  メモは非公開がデフォルト。公開設定で他のユーザーと共有も可能。
+                <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
+                  タグでメモを分類して簡単に検索
                 </p>
               </div>
             </div>
@@ -68,32 +84,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* CTA Section */}
       <section style={{ padding: "4rem 0", background: "var(--background-secondary)" }}>
-        <div className="container">
-          <div className="grid grid-3" style={{ textAlign: "center" }}>
-            <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: "800", color: "var(--color-primary)" }}>
-                4,000+
-              </div>
-              <div style={{ color: "var(--foreground-secondary)" }}>登録銘柄数</div>
-            </div>
-            <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: "800", color: "var(--color-secondary)" }}>
-                無料
-              </div>
-              <div style={{ color: "var(--foreground-secondary)" }}>すべての機能</div>
-            </div>
-            <div>
-              <div style={{ fontSize: "2.5rem", fontWeight: "800", color: "var(--color-accent)" }}>
-                安全
-              </div>
-              <div style={{ color: "var(--foreground-secondary)" }}>データ保護</div>
-            </div>
+        <div className="container" style={{ textAlign: "center" }}>
+          <h2 style={{ fontSize: "1.75rem", fontWeight: "700", marginBottom: "1rem" }}>
+            今すぐ始めよう
+          </h2>
+          <p style={{ color: "var(--foreground-secondary)", marginBottom: "2rem", maxWidth: "500px", margin: "0 auto 2rem" }}>
+            4,000以上の日本株銘柄に対応。すべての機能が無料で使えます。
+          </p>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/stocks" className="btn btn-primary">
+              📈 銘柄を探す
+            </Link>
+            <Link href="/watchlist" className="btn btn-outline">
+              👀 ウォッチリスト
+            </Link>
+            <Link href="/memos" className="btn btn-outline">
+              📝 マイメモ
+            </Link>
           </div>
         </div>
       </section>
     </>
   );
 }
-
