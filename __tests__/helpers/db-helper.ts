@@ -18,7 +18,7 @@ export async function resetDatabase(prisma: PrismaClient): Promise<void> {
         prisma.account.deleteMany(),
         prisma.session.deleteMany(),
         prisma.user.deleteMany(),
-        // stockは銘柄マスタなので通常削除しない
+        prisma.stock.deleteMany(), // テスト用DBでは銘柄も削除
     ]);
 }
 
