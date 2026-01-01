@@ -130,6 +130,9 @@ describe("WatchButton", () => {
         });
 
         it("エラー時にはアラートが表示される", async () => {
+            // console.errorの出力を抑制
+            const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => { });
+
             mockFetch.mockResolvedValueOnce({
                 ok: true,
                 json: () => Promise.resolve({ isWatching: false }),
@@ -147,6 +150,10 @@ describe("WatchButton", () => {
             await waitFor(() => {
                 expect(mockAlert).toHaveBeenCalledWith("操作に失敗しました");
             });
+
+            // console.errorが呼ばれたことを確認
+            expect(consoleSpy).toHaveBeenCalled();
+            consoleSpy.mockRestore();
         });
 
         it("処理中は「処理中...」と表示されボタンが無効になる", async () => {
