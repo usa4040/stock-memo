@@ -28,11 +28,7 @@ export default function Home() {
           <h2 style={{ textAlign: "center", fontSize: "2rem", fontWeight: "700", marginBottom: "3rem" }}>
             主な機能
           </h2>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "1.5rem"
-          }}>
+          <div className="grid grid-4">
             <div className="card">
               <div className="card-body" style={{ textAlign: "center" }}>
                 <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📊</div>

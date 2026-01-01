@@ -340,16 +340,24 @@ body {
 }
 
 .grid {
-  display: grid;
+  display: grid !important;
   gap: 1.5rem;
 }
 
 .grid-2 {
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
 }
 
 .grid-3 {
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.memo-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
 }
 
 /* ===========================================

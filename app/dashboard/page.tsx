@@ -89,12 +89,7 @@ export default function DashboardPage() {
             ) : dashboard ? (
                 <>
                     {/* 統計カード */}
-                    <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(4, 1fr)",
-                        gap: "1rem",
-                        marginBottom: "2rem"
-                    }}>
+                    <div className="grid grid-4" style={{ marginBottom: "2rem" }}>
                         <StatCard
                             icon="📝"
                             label="総メモ数"
@@ -135,11 +130,7 @@ export default function DashboardPage() {
                                     </p>
                                 </div>
                             ) : (
-                                <div style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                                    gap: "1rem"
-                                }}>
+                                <div className="grid memo-grid">
                                     {dashboard.pinnedMemos.map((memo) => (
                                         <MemoCard key={memo.id} memo={memo} />
                                     ))}
@@ -165,11 +156,7 @@ export default function DashboardPage() {
                                     </Link>
                                 </div>
                             ) : (
-                                <div style={{
-                                    display: "grid",
-                                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                                    gap: "1rem"
-                                }}>
+                                <div className="grid memo-grid">
                                     {dashboard.recentMemos.map((memo) => (
                                         <MemoCard key={memo.id} memo={memo} />
                                     ))}
