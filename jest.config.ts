@@ -6,12 +6,21 @@ const createJestConfig = nextJest({
     dir: "./",
 });
 
-const config: Config = {
+// ベース設定（Next.jsの変換設定を含む）
+const baseConfig: Config = {
+    // セットアップファイル
+    setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+
     // テスト環境
     testEnvironment: "jsdom",
 
-    // セットアップファイル
-    setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+    // テストファイルのパターン（統合テストを除外）
+    testPathIgnorePatterns: [
+        "/node_modules/",
+        "/__tests__/integration/",
+        "/__tests__/factories/",
+        "/__tests__/helpers/",
+    ],
 
     // テストファイルのパターン
     testMatch: [
@@ -24,6 +33,9 @@ const config: Config = {
         "app/**/*.{ts,tsx}",
         "components/**/*.{ts,tsx}",
         "lib/**/*.{ts,tsx}",
+        "domain/**/*.{ts,tsx}",
+        "application/**/*.{ts,tsx}",
+        "infrastructure/**/*.{ts,tsx}",
         "!**/*.d.ts",
         "!**/node_modules/**",
     ],
@@ -34,4 +46,4 @@ const config: Config = {
     },
 };
 
-export default createJestConfig(config);
+export default createJestConfig(baseConfig);
