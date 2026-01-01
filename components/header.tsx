@@ -11,7 +11,7 @@ export default function Header() {
             <div className="header-container">
                 <Link href="/" className="logo">
                     <span className="logo-icon">📈</span>
-                    <span className="logo-text">Stock Memo</span>
+                    <span className="logo-text">株メモ</span>
                 </Link>
 
                 <nav className="nav">

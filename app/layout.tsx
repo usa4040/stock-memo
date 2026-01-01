@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Stock Memo - 株式投資メモアプリ",
+  title: "株メモ - 株式投資メモアプリ",
   description: "あなたの株式投資アイデアを記録・整理するためのメモアプリケーション",
   keywords: ["株式", "投資", "メモ", "ポートフォリオ", "日本株"],
 };

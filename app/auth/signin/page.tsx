@@ -52,7 +52,7 @@ function SignInContent() {
                     <div style={{ textAlign: "center", marginBottom: "2rem" }}>
                         <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📈</div>
                         <h1 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "0.5rem" }}>
-                            Stock Memo にログイン
+                            株メモ にログイン
                         </h1>
                         <p style={{ color: "var(--foreground-secondary)" }}>
                             メールアドレスを入力してください

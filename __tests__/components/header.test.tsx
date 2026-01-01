@@ -22,7 +22,7 @@ function MockHeader() {
     return (
         <header>
             <nav>
-                <a href="/">Stock Memo</a>
+                <a href="/">株メモ</a>
                 <a href="/stocks">銘柄一覧</a>
                 {status === "loading" ? (
                     <span>読み込み中...</span>
@@ -56,7 +56,7 @@ describe("Header", () => {
         it("ロゴとナビゲーションが表示される", () => {
             render(<MockHeader />);
 
-            expect(screen.getByText("Stock Memo")).toBeInTheDocument();
+            expect(screen.getByText("株メモ")).toBeInTheDocument();
             expect(screen.getByText("銘柄一覧")).toBeInTheDocument();
         });
 

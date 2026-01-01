@@ -6,7 +6,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="hero">
         <div className="container">
-          <h1 className="hero-title">Stock Memo</h1>
+          <h1 className="hero-title">株メモ</h1>
           <p className="hero-description">
             あなたの株式投資アイデアを記録・整理するためのメモアプリケーション。
             気になる銘柄をウォッチし、投資判断をサポートします。
