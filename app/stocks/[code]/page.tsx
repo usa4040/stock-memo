@@ -10,24 +10,29 @@ interface Props {
 export default async function StockDetailPage({ params }: Props) {
     const { code } = await params;
 
-    const stock = await prisma.stock.findUnique({
-        where: { code },
-        include: {
-            memos: {
-                where: { visibility: "public" },
-                orderBy: { createdAt: "desc" },
-                take: 10,
-                include: {
-                    user: {
-                        select: { name: true, image: true },
+    const [stock, publicMemosCount] = await Promise.all([
+        prisma.stock.findUnique({
+            where: { code },
+            include: {
+                memos: {
+                    where: { visibility: "public" },
+                    orderBy: { createdAt: "desc" },
+                    take: 10,
+                    include: {
+                        user: {
+                            select: { name: true, image: true },
+                        },
                     },
                 },
             },
-            _count: {
-                select: { memos: true },
+        }),
+        prisma.memo.count({
+            where: {
+                stockCode: code,
+                visibility: "public",
             },
-        },
-    });
+        }),
+    ]);
 
     if (!stock) {
         notFound();
@@ -94,7 +99,7 @@ export default async function StockDetailPage({ params }: Props) {
             {/* 公開メモ */}
             <section>
                 <h2 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "1rem" }}>
-                    公開メモ ({stock._count.memos}件)
+                    公開メモ ({publicMemosCount}件)
                 </h2>
 
                 {stock.memos.length === 0 ? (

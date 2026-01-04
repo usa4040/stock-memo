@@ -72,6 +72,44 @@ describe("PrismaMemoRepository Integration", () => {
             expect(result.memos).toHaveLength(1);
             expect(result.memos[0].userId).toBe(user1.id);
         });
+
+        it("非公開と公開のメモが正しく保存・取得される", async () => {
+            // Arrange
+            const user = await UserFactory.create(prismaTest);
+            await StockFactory.create(prismaTest, { code: "9984", name: "SoftBank Group" });
+
+            // 非公開メモ
+            const privateMemo = Memo.create({
+                id: "private-memo",
+                userId: user.id,
+                stockCode: "9984",
+                content: "非公開メモ",
+                visibility: "private",
+            });
+            await repository.save(privateMemo);
+
+            // 公開メモ
+            const publicMemo = Memo.create({
+                id: "public-memo",
+                userId: user.id,
+                stockCode: "9984",
+                content: "公開メモ",
+                visibility: "public",
+            });
+            await repository.save(publicMemo);
+
+            // Act
+            const result = await repository.findByUserId(user.id);
+
+            // Assert
+            expect(result.memos).toHaveLength(2);
+
+            const privateMemos = result.memos.filter(m => m.visibility.isPrivate);
+            const publicMemos = result.memos.filter(m => m.visibility.isPublic);
+
+            expect(privateMemos).toHaveLength(1);
+            expect(publicMemos).toHaveLength(1);
+        });
     });
 
     describe("save", () => {
