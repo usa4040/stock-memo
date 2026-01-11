@@ -35,6 +35,9 @@ function MockHomePage() {
                         <a href="/stocks" className="btn btn-primary">
                             銘柄を探す
                         </a>
+                        <a href="/dashboard" className="btn btn-outline">
+                            ダッシュボード
+                        </a>
                         <a href="/memos" className="btn btn-outline">
                             マイメモ
                         </a>
@@ -110,6 +113,14 @@ describe("ホームページ", () => {
             const link = screen.getByText("マイメモ");
             expect(link).toBeInTheDocument();
             expect(link).toHaveAttribute("href", "/memos");
+        });
+
+        it("ダッシュボードリンクがある", () => {
+            render(<MockHomePage />);
+
+            const link = screen.getByText("ダッシュボード");
+            expect(link).toBeInTheDocument();
+            expect(link).toHaveAttribute("href", "/dashboard");
         });
     });
 
