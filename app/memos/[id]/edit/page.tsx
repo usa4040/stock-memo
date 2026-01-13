@@ -125,7 +125,7 @@ export default function EditMemoPage() {
             <div className="container" style={{ padding: "4rem 1.5rem", textAlign: "center" }}>
                 <div className="card" style={{ maxWidth: "500px", margin: "0 auto" }}>
                     <div className="card-body">
-                        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚠️</div>
+                        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}></div>
                         <h1 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "1rem" }}>
                             {error}
                         </h1>
@@ -216,7 +216,7 @@ export default function EditMemoPage() {
                                     checked={visibility === "private"}
                                     onChange={() => setVisibility("private")}
                                 />
-                                🔒 非公開
+                                非公開
                             </label>
                             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
                                 <input

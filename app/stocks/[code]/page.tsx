@@ -91,7 +91,7 @@ export default async function StockDetailPage({ params }: Props) {
             {/* アクション */}
             <div style={{ marginBottom: "2rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                 <Link href={`/memos/new?stockCode=${stock.code}`} className="btn btn-primary">
-                    📝 この銘柄にメモを追加
+                    この銘柄にメモを追加
                 </Link>
                 <WatchButton stockCode={stock.code} />
             </div>
@@ -104,7 +104,7 @@ export default async function StockDetailPage({ params }: Props) {
 
                 {stock.memos.length === 0 ? (
                     <div className="empty-state card">
-                        <div className="empty-state-icon">📝</div>
+                        <div className="empty-state-icon"></div>
                         <p className="empty-state-title">まだ公開メモがありません</p>
                         <p>最初のメモを作成してみましょう</p>
                     </div>

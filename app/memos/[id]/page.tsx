@@ -123,7 +123,7 @@ export default function MemoDetailPage() {
             <div className="container" style={{ padding: "4rem 1.5rem", textAlign: "center" }}>
                 <div className="card" style={{ maxWidth: "500px", margin: "0 auto" }}>
                     <div className="card-body">
-                        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚠️</div>
+                        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}></div>
                         <h1 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "1rem" }}>
                             {error}
                         </h1>
@@ -157,7 +157,7 @@ export default function MemoDetailPage() {
                             <span className="stock-name" style={{ fontSize: "1rem" }}>{memo.stock.name}</span>
                         </Link>
                         <div style={{ display: "flex", gap: "0.5rem" }}>
-                            {memo.pinned && <span className="pinned-badge">📌 ピン留め</span>}
+                            {memo.pinned && <span className="pinned-badge">ピン留め済み</span>}
                             <span
                                 className="tag"
                                 style={{
@@ -165,7 +165,7 @@ export default function MemoDetailPage() {
                                     color: "white"
                                 }}
                             >
-                                {memo.visibility === "public" ? "🌐 公開" : "🔒 非公開"}
+                                {memo.visibility === "public" ? "公開" : "非公開"}
                             </span>
                         </div>
                     </div>
@@ -219,16 +219,16 @@ export default function MemoDetailPage() {
                                 onClick={handleTogglePin}
                                 className="btn btn-outline"
                             >
-                                {memo.pinned ? "📌 ピン解除" : "📌 ピン留め"}
+                                {memo.pinned ? "ピン留め解除" : "ピン留め"}
                             </button>
                             <Link href={`/memos/${memo.id}/edit`} className="btn btn-primary">
-                                ✏️ 編集
+                                編集
                             </Link>
                             <button
                                 onClick={() => setShowDeleteModal(true)}
                                 className="btn btn-danger"
                             >
-                                🗑️ 削除
+                                削除
                             </button>
                         </div>
                     </div>

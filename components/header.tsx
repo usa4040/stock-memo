@@ -10,7 +10,6 @@ export default function Header() {
         <header className="header">
             <div className="header-container">
                 <Link href="/" className="logo">
-                    <span className="logo-icon">📈</span>
                     <span className="logo-text">株メモ</span>
                 </Link>
 

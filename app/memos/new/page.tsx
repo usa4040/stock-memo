@@ -272,7 +272,7 @@ function NewMemoContent() {
                                     checked={visibility === "private"}
                                     onChange={() => setVisibility("private")}
                                 />
-                                🔒 非公開
+                                非公開
                             </label>
                             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
                                 <input

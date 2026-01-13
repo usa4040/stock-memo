@@ -258,7 +258,7 @@ export default function MemosPage() {
                 </div>
             ) : memos.length === 0 ? (
                 <div className="empty-state card">
-                    <div className="empty-state-icon">📝</div>
+                    <div className="empty-state-icon"></div>
                     <p className="empty-state-title">まだメモがありません</p>
                     <p style={{ marginBottom: "1.5rem" }}>銘柄を選んでメモを作成しましょう</p>
                     <Link href="/stocks" className="btn btn-primary">
@@ -276,7 +276,7 @@ export default function MemosPage() {
                                         <span className="stock-name">{memo.stock.name}</span>
                                     </Link>
                                     <div style={{ display: "flex", gap: "0.5rem" }}>
-                                        {memo.pinned && <span className="pinned-badge">📌 ピン</span>}
+                                        {memo.pinned && <span className="pinned-badge">ピン留め</span>}
                                         {memo.visibility === "public" && (
                                             <span className="tag" style={{ background: "var(--color-success)", color: "white" }}>
                                                 公開
@@ -319,7 +319,7 @@ export default function MemosPage() {
                                             className="btn btn-outline"
                                             style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
                                         >
-                                            {memo.pinned ? "📌 解除" : "📌 ピン"}
+                                            {memo.pinned ? "ピン留め解除" : "ピン留め"}
                                         </button>
                                         <Link
                                             href={`/memos/${memo.id}/edit`}

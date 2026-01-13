@@ -50,7 +50,7 @@ function SignInContent() {
             <div className="card" style={{ width: "100%", maxWidth: "400px" }}>
                 <div className="card-body" style={{ padding: "2rem" }}>
                     <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-                        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📈</div>
+                        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}></div>
                         <h1 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "0.5rem" }}>
                             株メモ にログイン
                         </h1>

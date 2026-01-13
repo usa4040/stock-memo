@@ -73,11 +73,11 @@ export default function WatchlistPage() {
             {/* ヘッダー */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
                 <div>
-                    <h1 className="page-title">👀 ウォッチリスト</h1>
+                    <h1 className="page-title">ウォッチリスト</h1>
                     <p className="page-description">気になる銘柄をまとめて管理</p>
                 </div>
                 <Link href="/stocks" className="btn btn-primary">
-                    📈 銘柄を探す
+                    銘柄を探す
                 </Link>
             </div>
 
@@ -88,13 +88,13 @@ export default function WatchlistPage() {
                 </div>
             ) : items.length === 0 ? (
                 <div className="card empty-state" style={{ padding: "3rem", textAlign: "center" }}>
-                    <div className="empty-state-icon">👀</div>
+                    <div className="empty-state-icon"></div>
                     <p className="empty-state-title">ウォッチリストは空です</p>
                     <p style={{ color: "var(--foreground-secondary)", marginBottom: "1.5rem" }}>
                         銘柄詳細ページから「ウォッチ」ボタンで追加できます
                     </p>
                     <Link href="/stocks" className="btn btn-primary">
-                        📈 銘柄を探す
+                        銘柄を探す
                     </Link>
                 </div>
             ) : (
@@ -114,7 +114,7 @@ export default function WatchlistPage() {
                                     </Link>
                                     {item.note && (
                                         <p style={{ fontSize: "0.875rem", color: "var(--foreground-secondary)", marginTop: "0.5rem" }}>
-                                            💬 {item.note}
+                                            {item.note}
                                         </p>
                                     )}
                                     <p style={{ fontSize: "0.75rem", color: "var(--foreground-muted)", marginTop: "0.5rem" }}>
@@ -127,7 +127,7 @@ export default function WatchlistPage() {
                                         className="btn btn-outline"
                                         style={{ fontSize: "0.875rem" }}
                                     >
-                                        📝 メモ作成
+                                        メモ作成
                                     </Link>
                                     <button
                                         onClick={() => handleRemove(item.stockCode)}

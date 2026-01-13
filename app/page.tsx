@@ -7,16 +7,12 @@ export default function Home() {
       <section className="hero">
         <div className="container">
           <h1 className="hero-title">株メモ</h1>
-          <p className="hero-description">
-            あなたの株式投資アイデアを記録・整理するためのメモアプリケーション。
-            気になる銘柄をウォッチし、投資判断をサポートします。
-          </p>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/stocks" className="btn btn-primary" style={{ background: "white", color: "#3b82f6" }}>
-              📈 銘柄を探す
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap", marginTop: "2rem" }}>
+            <Link href="/stocks" className="btn btn-primary" style={{ background: "white", color: "#16a34a" }}>
+              銘柄を探す
             </Link>
             <Link href="/dashboard" className="btn btn-outline" style={{ borderColor: "white", color: "white" }}>
-              📊 ダッシュボード
+              ダッシュボード
             </Link>
           </div>
         </div>
@@ -31,8 +27,7 @@ export default function Home() {
           <div className="grid grid-4">
             <div className="card">
               <div className="card-body" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📊</div>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem", color: "var(--color-primary)" }}>
                   ダッシュボード
                 </h3>
                 <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
@@ -43,8 +38,7 @@ export default function Home() {
 
             <div className="card">
               <div className="card-body" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>👀</div>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem", color: "var(--color-primary)" }}>
                   ウォッチリスト
                 </h3>
                 <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
@@ -55,8 +49,7 @@ export default function Home() {
 
             <div className="card">
               <div className="card-body" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📝</div>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem", color: "var(--color-primary)" }}>
                   銘柄メモ
                 </h3>
                 <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
@@ -67,8 +60,7 @@ export default function Home() {
 
             <div className="card">
               <div className="card-body" style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🏷️</div>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", marginBottom: "0.5rem", color: "var(--color-primary)" }}>
                   タグ管理
                 </h3>
                 <p style={{ color: "var(--foreground-secondary)", fontSize: "0.875rem" }}>
@@ -91,13 +83,13 @@ export default function Home() {
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/stocks" className="btn btn-primary">
-              📈 銘柄を探す
+              銘柄を探す
             </Link>
             <Link href="/watchlist" className="btn btn-outline">
-              👀 ウォッチリスト
+              ウォッチリスト
             </Link>
             <Link href="/memos" className="btn btn-outline">
-              📝 マイメモ
+              マイメモ
             </Link>
           </div>
         </div>

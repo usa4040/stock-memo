@@ -91,25 +91,21 @@ export default function DashboardPage() {
                     {/* 統計カード */}
                     <div className="grid grid-4" style={{ marginBottom: "2rem" }}>
                         <StatCard
-                            icon="📝"
                             label="総メモ数"
                             value={dashboard.statistics.totalMemos}
                             color="var(--color-primary)"
                         />
                         <StatCard
-                            icon="📈"
                             label="対象銘柄"
                             value={dashboard.statistics.totalStocks}
                             color="var(--color-secondary)"
                         />
                         <StatCard
-                            icon="🏷️"
                             label="使用タグ"
                             value={dashboard.statistics.totalTags}
                             color="var(--color-accent)"
                         />
                         <StatCard
-                            icon="📌"
                             label="ピン留め"
                             value={dashboard.statistics.pinnedMemos}
                             color="var(--color-success)"
@@ -121,7 +117,7 @@ export default function DashboardPage() {
                         {/* ピン留めメモ */}
                         <section>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                                <h2 style={{ fontSize: "1.25rem", fontWeight: "700" }}>📌 ピン留めメモ</h2>
+                                <h2 style={{ fontSize: "1.25rem", fontWeight: "700" }}>ピン留めメモ</h2>
                             </div>
                             {dashboard.pinnedMemos.length === 0 ? (
                                 <div className="card" style={{ padding: "2rem", textAlign: "center" }}>
@@ -141,7 +137,7 @@ export default function DashboardPage() {
                         {/* 最近のメモ */}
                         <section>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                                <h2 style={{ fontSize: "1.25rem", fontWeight: "700" }}>🕐 最近のメモ</h2>
+                                <h2 style={{ fontSize: "1.25rem", fontWeight: "700" }}>最近のメモ</h2>
                                 <Link href="/memos" style={{ fontSize: "0.875rem", color: "var(--color-primary)" }}>
                                     すべて見る →
                                 </Link>
@@ -152,7 +148,7 @@ export default function DashboardPage() {
                                         まだメモがありません
                                     </p>
                                     <Link href="/stocks" className="btn btn-primary" style={{ marginTop: "1rem" }}>
-                                        📈 銘柄を探す
+                                        銘柄を探す
                                     </Link>
                                 </div>
                             ) : (
@@ -169,7 +165,7 @@ export default function DashboardPage() {
                     {dashboard.topTags.length > 0 && (
                         <section style={{ marginTop: "2rem" }}>
                             <h2 style={{ fontSize: "1.25rem", fontWeight: "700", marginBottom: "1rem" }}>
-                                🏷️ よく使うタグ
+                                よく使うタグ
                             </h2>
                             <div className="card" style={{ padding: "1.5rem" }}>
                                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
@@ -206,24 +202,24 @@ export default function DashboardPage() {
                     {/* クイックアクション */}
                     <section style={{ marginTop: "2rem" }}>
                         <h2 style={{ fontSize: "1.25rem", fontWeight: "700", marginBottom: "1rem" }}>
-                            ⚡ クイックアクション
+                            クイックアクション
                         </h2>
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                             <Link href="/memos/new" className="btn btn-primary">
-                                📝 新規メモ作成
+                                新規メモ作成
                             </Link>
                             <Link href="/stocks" className="btn btn-outline">
-                                📈 銘柄を探す
+                                銘柄を探す
                             </Link>
                             <Link href="/memos" className="btn btn-outline">
-                                📋 メモ一覧
+                                メモ一覧
                             </Link>
                         </div>
                     </section>
                 </>
             ) : (
                 <div className="empty-state card">
-                    <div className="empty-state-icon">⚠️</div>
+                    <div className="empty-state-icon"></div>
                     <p className="empty-state-title">データの取得に失敗しました</p>
                     <button onClick={fetchDashboard} className="btn btn-primary" style={{ marginTop: "1rem" }}>
                         再読み込み
@@ -235,8 +231,7 @@ export default function DashboardPage() {
 }
 
 // 統計カードコンポーネント
-function StatCard({ icon, label, value, color }: {
-    icon: string;
+function StatCard({ label, value, color }: {
     label: string;
     value: number;
     color: string;
@@ -244,7 +239,6 @@ function StatCard({ icon, label, value, color }: {
     return (
         <div className="card" style={{ padding: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                <div style={{ fontSize: "2rem" }}>{icon}</div>
                 <div>
                     <div style={{ fontSize: "2rem", fontWeight: "800", color }}>{value}</div>
                     <div style={{ fontSize: "0.875rem", color: "var(--foreground-secondary)" }}>{label}</div>
@@ -264,7 +258,7 @@ function MemoCard({ memo }: { memo: MemoSummary }) {
                         <span className="stock-code">{memo.stockCode}</span>
                         <span className="stock-name">{memo.stockName}</span>
                     </div>
-                    {memo.pinned && <span className="pinned-badge">📌</span>}
+                    {memo.pinned && <span className="pinned-badge">ピン留め</span>}
                 </div>
                 {memo.title && (
                     <h3 style={{ fontWeight: "600", marginBottom: "0.25rem", fontSize: "0.9375rem" }}>
