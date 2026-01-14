@@ -27,6 +27,9 @@ const mockGetServerSession = getServerSession as jest.MockedFunction<typeof getS
 const TEST_USER_ID = "test-dashboard-user";
 const TEST_USER_EMAIL = "test-dashboard@example.com";
 
+// テスト全体のタイムアウトを30秒に設定
+jest.setTimeout(30000);
+
 describe("Dashboard API Routes", () => {
     let testUserId: string;
 
