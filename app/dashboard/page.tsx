@@ -62,7 +62,7 @@ export default function DashboardPage() {
         return (
             <div className="container" style={{ padding: "4rem 1.5rem", textAlign: "center" }}>
                 <div className="loading-spinner" style={{ margin: "0 auto" }} />
-                <p style={{ marginTop: "1rem", color: "var(--foreground-secondary)" }}>読み込み中...</p>
+                <p style={{ marginTop: "1rem", color: "var(--foreground-secondary)" }}>読み込み中…</p>
             </div>
         );
     }
@@ -84,7 +84,7 @@ export default function DashboardPage() {
             {loading ? (
                 <div className="empty-state">
                     <div className="loading-spinner" style={{ margin: "0 auto" }} />
-                    <p style={{ marginTop: "1rem" }}>読み込み中...</p>
+                    <p style={{ marginTop: "1rem" }}>読み込み中…</p>
                 </div>
             ) : dashboard ? (
                 <>
@@ -240,7 +240,7 @@ function StatCard({ label, value, color }: {
         <div className="card" style={{ padding: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 <div>
-                    <div style={{ fontSize: "2rem", fontWeight: "800", color }}>{value}</div>
+                    <div style={{ fontSize: "2rem", fontWeight: "800", color, fontVariantNumeric: "tabular-nums" }}>{value}</div>
                     <div style={{ fontSize: "0.875rem", color: "var(--foreground-secondary)" }}>{label}</div>
                 </div>
             </div>

@@ -156,7 +156,7 @@ describe("WatchButton", () => {
             consoleSpy.mockRestore();
         });
 
-        it("処理中は「処理中...」と表示されボタンが無効になる", async () => {
+        it("処理中は「処理中…」と表示されボタンが無効になる", async () => {
             mockFetch.mockResolvedValueOnce({
                 ok: true,
                 json: () => Promise.resolve({ isWatching: false }),
@@ -180,7 +180,7 @@ describe("WatchButton", () => {
 
             fireEvent.click(screen.getByRole("button"));
 
-            expect(screen.getByText("処理中...")).toBeInTheDocument();
+            expect(screen.getByText("処理中…")).toBeInTheDocument();
             expect(screen.getByRole("button")).toBeDisabled();
         });
     });

@@ -78,7 +78,7 @@ export default function WatchButton({ stockCode }: WatchButtonProps) {
     if (loading) {
         return (
             <button className="btn btn-outline" disabled style={{ opacity: 0.5 }}>
-                👀 読み込み中...
+                👀 読み込み中…
             </button>
         );
     }
@@ -93,7 +93,7 @@ export default function WatchButton({ stockCode }: WatchButtonProps) {
             }}
         >
             {actionLoading ? (
-                "処理中..."
+                "処理中…"
             ) : isWatching ? (
                 "👀 ウォッチ中"
             ) : (

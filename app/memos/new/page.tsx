@@ -147,7 +147,7 @@ function NewMemoContent() {
 
                     {/* 銘柄選択 */}
                     <div style={{ marginBottom: "1.5rem" }}>
-                        <label className="label">銘柄 *</label>
+                        <label className="label" htmlFor="stock-search">銘柄 *</label>
                         {selectedStock ? (
                             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                                 <div className="stock-badge">
@@ -169,9 +169,10 @@ function NewMemoContent() {
                         ) : (
                             <div style={{ position: "relative" }}>
                                 <input
+                                    id="stock-search"
                                     type="text"
                                     className="input"
-                                    placeholder="銘柄コードまたは銘柄名を入力..."
+                                    placeholder="銘柄コードまたは銘柄名を入力…"
                                     value={stockSearch}
                                     onChange={(e) => setStockSearch(e.target.value)}
                                 />
@@ -221,11 +222,12 @@ function NewMemoContent() {
 
                     {/* タイトル */}
                     <div style={{ marginBottom: "1.5rem" }}>
-                        <label className="label">タイトル（任意）</label>
+                        <label className="label" htmlFor="memo-title">タイトル（任意）</label>
                         <input
+                            id="memo-title"
                             type="text"
                             className="input"
-                            placeholder="メモのタイトル"
+                            placeholder="メモのタイトル…"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             maxLength={200}
@@ -234,10 +236,11 @@ function NewMemoContent() {
 
                     {/* 内容 */}
                     <div style={{ marginBottom: "1.5rem" }}>
-                        <label className="label">内容 *</label>
+                        <label className="label" htmlFor="memo-content">内容 *</label>
                         <textarea
+                            id="memo-content"
                             className="input textarea"
-                            placeholder="投資アイデアや分析結果を記録..."
+                            placeholder="投資アイデアや分析結果を記録…"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             rows={8}
@@ -250,11 +253,12 @@ function NewMemoContent() {
 
                     {/* タグ */}
                     <div style={{ marginBottom: "1.5rem" }}>
-                        <label className="label">タグ（カンマ区切り）</label>
+                        <label className="label" htmlFor="memo-tags">タグ（カンマ区切り）</label>
                         <input
+                            id="memo-tags"
                             type="text"
                             className="input"
-                            placeholder="長期投資, 高配当, バリュー株"
+                            placeholder="長期投資, 高配当, バリュー株…"
                             value={tags}
                             onChange={(e) => setTags(e.target.value)}
                         />
@@ -262,7 +266,7 @@ function NewMemoContent() {
 
                     {/* 公開設定 */}
                     <div style={{ marginBottom: "1.5rem" }}>
-                        <label className="label">公開設定</label>
+                        <span className="label">公開設定</span>
                         <div style={{ display: "flex", gap: "1rem" }}>
                             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
                                 <input
@@ -295,7 +299,7 @@ function NewMemoContent() {
                             disabled={loading}
                             style={{ flex: 1 }}
                         >
-                            {loading ? "作成中..." : "メモを作成"}
+                            {loading ? "作成中…" : "メモを作成"}
                         </button>
                         <Link href="/memos" className="btn btn-outline">
                             キャンセル
