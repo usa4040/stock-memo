@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
+import useSWR, { mutate } from "swr";
+import { fetcher } from "@/lib/swr";
 
 interface WatchButtonProps {
     stockCode: string;
@@ -9,32 +11,15 @@ interface WatchButtonProps {
 
 export default function WatchButton({ stockCode }: WatchButtonProps) {
     const { data: session } = useSession();
-    const [isWatching, setIsWatching] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
 
-    useEffect(() => {
-        if (session) {
-            checkWatchStatus();
-        } else {
-            setLoading(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, stockCode]);
+    // SWRでウォッチ状態を取得（sessionがある場合のみ）
+    const { data, isLoading } = useSWR(
+        session ? `/api/watchlist/${stockCode}` : null,
+        fetcher
+    );
 
-    const checkWatchStatus = async () => {
-        try {
-            const res = await fetch(`/api/watchlist/${stockCode}`);
-            if (res.ok) {
-                const data = await res.json();
-                setIsWatching(data.isWatching);
-            }
-        } catch (error) {
-            console.error("Error checking watch status:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const isWatching = data?.isWatching ?? false;
 
     const handleToggleWatch = async () => {
         if (!session) {
@@ -50,7 +35,8 @@ export default function WatchButton({ stockCode }: WatchButtonProps) {
                     method: "DELETE",
                 });
                 if (res.ok) {
-                    setIsWatching(false);
+                    // SWRキャッシュを更新
+                    mutate(`/api/watchlist/${stockCode}`, { isWatching: false }, false);
                 }
             } else {
                 // ウォッチ追加
@@ -60,7 +46,8 @@ export default function WatchButton({ stockCode }: WatchButtonProps) {
                     body: JSON.stringify({ stockCode }),
                 });
                 if (res.ok) {
-                    setIsWatching(true);
+                    // SWRキャッシュを更新
+                    mutate(`/api/watchlist/${stockCode}`, { isWatching: true }, false);
                 }
             }
         } catch (error) {
@@ -75,7 +62,7 @@ export default function WatchButton({ stockCode }: WatchButtonProps) {
         return null;
     }
 
-    if (loading) {
+    if (isLoading) {
         return (
             <button className="btn btn-outline" disabled style={{ opacity: 0.5 }}>
                 👀 読み込み中…

@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import WatchButton from "@/components/watch-button";
+import { SWRConfig } from "swr";
 
 // next-auth/react のモック
 jest.mock("next-auth/react", () => ({
@@ -17,6 +18,13 @@ global.alert = mockAlert;
 import { useSession } from "next-auth/react";
 const mockUseSession = useSession as jest.Mock;
 
+// SWRのキャッシュを無効化するラッパー
+const SWRWrapper = ({ children }: { children: React.ReactNode }) => (
+    <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
+        {children}
+    </SWRConfig>
+);
+
 describe("WatchButton", () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -26,7 +34,11 @@ describe("WatchButton", () => {
         it("セッションがない場合は何も表示しない", () => {
             mockUseSession.mockReturnValue({ data: null });
 
-            const { container } = render(<WatchButton stockCode="7203" />);
+            const { container } = render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             expect(container.firstChild).toBeNull();
         });
@@ -39,10 +51,14 @@ describe("WatchButton", () => {
             });
         });
 
-        it("読み込み中は「読み込み中...」と表示される", async () => {
+        it("読み込み中は「読み込み中…」と表示される", async () => {
             mockFetch.mockImplementation(() => new Promise(() => { })); // 永久に解決しない
 
-            render(<WatchButton stockCode="7203" />);
+            render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             expect(screen.getByText(/読み込み中/)).toBeInTheDocument();
         });
@@ -53,7 +69,11 @@ describe("WatchButton", () => {
                 json: () => Promise.resolve({ isWatching: false }),
             });
 
-            render(<WatchButton stockCode="7203" />);
+            render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             await waitFor(() => {
                 expect(screen.getByText(/ウォッチする/)).toBeInTheDocument();
@@ -66,7 +86,11 @@ describe("WatchButton", () => {
                 json: () => Promise.resolve({ isWatching: true }),
             });
 
-            render(<WatchButton stockCode="7203" />);
+            render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             await waitFor(() => {
                 expect(screen.getByText(/ウォッチ中/)).toBeInTheDocument();
@@ -85,7 +109,11 @@ describe("WatchButton", () => {
                 json: () => Promise.resolve({}),
             });
 
-            render(<WatchButton stockCode="7203" />);
+            render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             await waitFor(() => {
                 expect(screen.getByText(/ウォッチする/)).toBeInTheDocument();
@@ -114,7 +142,11 @@ describe("WatchButton", () => {
                 json: () => Promise.resolve({}),
             });
 
-            render(<WatchButton stockCode="7203" />);
+            render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             await waitFor(() => {
                 expect(screen.getByText(/ウォッチ中/)).toBeInTheDocument();
@@ -139,7 +171,11 @@ describe("WatchButton", () => {
             });
             mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
-            render(<WatchButton stockCode="7203" />);
+            render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             await waitFor(() => {
                 expect(screen.getByText(/ウォッチする/)).toBeInTheDocument();
@@ -172,7 +208,11 @@ describe("WatchButton", () => {
                     )
             );
 
-            render(<WatchButton stockCode="7203" />);
+            render(
+                <SWRWrapper>
+                    <WatchButton stockCode="7203" />
+                </SWRWrapper>
+            );
 
             await waitFor(() => {
                 expect(screen.getByText(/ウォッチする/)).toBeInTheDocument();

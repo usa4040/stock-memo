@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/swr";
 
 interface MemoSummary {
     id: string;
@@ -31,32 +33,19 @@ interface DashboardData {
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [dashboard, setDashboard] = useState<DashboardData | null>(null);
-    const [loading, setLoading] = useState(true);
+
+    // SWRでダッシュボードデータを取得（sessionがある場合のみ）
+    const { data: dashboard, isLoading, mutate } = useSWR<DashboardData>(
+        session ? "/api/dashboard" : null,
+        fetcher
+    );
 
     useEffect(() => {
         if (status === "loading") return;
         if (!session) {
             router.push("/api/auth/signin");
-            return;
         }
-        fetchDashboard();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session, status]);
-
-    const fetchDashboard = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch("/api/dashboard");
-            if (!res.ok) throw new Error("Failed to fetch dashboard");
-            const data: DashboardData = await res.json();
-            setDashboard(data);
-        } catch (error) {
-            console.error("Error fetching dashboard:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [session, status, router]);
 
     if (status === "loading") {
         return (
@@ -81,7 +70,7 @@ export default function DashboardPage() {
                 </p>
             </div>
 
-            {loading ? (
+            {isLoading ? (
                 <div className="empty-state">
                     <div className="loading-spinner" style={{ margin: "0 auto" }} />
                     <p style={{ marginTop: "1rem" }}>読み込み中…</p>
@@ -221,7 +210,7 @@ export default function DashboardPage() {
                 <div className="empty-state card">
                     <div className="empty-state-icon"></div>
                     <p className="empty-state-title">データの取得に失敗しました</p>
-                    <button onClick={fetchDashboard} className="btn btn-primary" style={{ marginTop: "1rem" }}>
+                    <button onClick={() => mutate()} className="btn btn-primary" style={{ marginTop: "1rem" }}>
                         再読み込み
                     </button>
                 </div>

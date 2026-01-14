@@ -164,7 +164,7 @@ export default function MemosPage() {
         return (
             <div className="container" style={{ padding: "4rem 1.5rem", textAlign: "center" }}>
                 <div className="loading-spinner" style={{ margin: "0 auto" }} />
-                <p style={{ marginTop: "1rem", color: "var(--foreground-secondary)" }}>読み込み中...</p>
+                <p style={{ marginTop: "1rem", color: "var(--foreground-secondary)" }}>読み込み中…</p>
             </div>
         );
     }
@@ -254,7 +254,7 @@ export default function MemosPage() {
             {loading ? (
                 <div className="empty-state">
                     <div className="loading-spinner" style={{ margin: "0 auto" }} />
-                    <p style={{ marginTop: "1rem" }}>読み込み中...</p>
+                    <p style={{ marginTop: "1rem" }}>読み込み中…</p>
                 </div>
             ) : memos.length === 0 ? (
                 <div className="empty-state card">
@@ -296,7 +296,7 @@ export default function MemosPage() {
                                 <Link href={`/memos/${memo.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                                     <p style={{ color: "var(--foreground-secondary)", marginBottom: "1rem", lineHeight: "1.6", cursor: "pointer" }}>
                                         {memo.content.length > 150
-                                            ? memo.content.slice(0, 150) + "..."
+                                            ? memo.content.slice(0, 150) + "…"
                                             : memo.content}
                                     </p>
                                 </Link>
@@ -371,7 +371,7 @@ export default function MemosPage() {
                 isOpen={deleteTarget !== null}
                 title="メモを削除"
                 message={`「${deleteTarget?.stock.name}」のメモを削除しますか？この操作は取り消せません。`}
-                confirmText={isDeleting ? "削除中..." : "削除する"}
+                confirmText={isDeleting ? "削除中…" : "削除する"}
                 cancelText="キャンセル"
                 confirmButtonClass="btn-danger"
                 onConfirm={confirmDelete}

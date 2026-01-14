@@ -120,7 +120,7 @@ export default async function StockDetailPage({ params }: Props) {
                                     )}
                                     <p style={{ color: "var(--foreground-secondary)", marginBottom: "1rem", lineHeight: "1.6" }}>
                                         {memo.content.length > 200
-                                            ? memo.content.slice(0, 200) + "..."
+                                            ? memo.content.slice(0, 200) + "…"
                                             : memo.content}
                                     </p>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

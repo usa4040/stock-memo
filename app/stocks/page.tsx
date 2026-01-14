@@ -92,7 +92,7 @@ export default function StocksPage() {
             {loading ? (
                 <div className="empty-state">
                     <div className="loading-spinner" style={{ margin: "0 auto" }} />
-                    <p style={{ marginTop: "1rem" }}>読み込み中...</p>
+                    <p style={{ marginTop: "1rem" }}>読み込み中…</p>
                 </div>
             ) : stocks.length === 0 ? (
                 <div className="empty-state">
