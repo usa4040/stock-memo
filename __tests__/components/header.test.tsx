@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { render, screen } from "@testing-library/react";
 import { useSession, signOut } from "next-auth/react";
 
@@ -7,7 +8,7 @@ jest.mock("next-auth/react", () => ({
     signOut: jest.fn(),
 }));
 
-// next/link をモック
+// next/link をモック（テスト用に<a>タグで代替）
 jest.mock("next/link", () => {
     return function MockLink({ children, href }: { children: React.ReactNode; href: string }) {
         return <a href={href}>{children}</a>;

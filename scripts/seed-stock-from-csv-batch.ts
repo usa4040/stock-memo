@@ -35,13 +35,13 @@ function parseDateYYYYMMDD(s?: string): Date | null {
     return new Date(`${yyyy}-${mm}-${dd}T00:00:00.000Z`);
 }
 
-async function readCsvRows(): Promise<any[]> {
+async function readCsvRows(): Promise<Record<string, string>[]> {
     if (!fs.existsSync(CSV_PATH)) {
         throw new Error(`CSV not found at ${CSV_PATH}`);
     }
 
     return new Promise((resolve, reject) => {
-        const rows: any[] = [];
+        const rows: Record<string, string>[] = [];
         fs.createReadStream(CSV_PATH)
             .pipe(csv({ skipLines: 0 }))
             .on('data', (row) => rows.push(row))
@@ -50,7 +50,7 @@ async function readCsvRows(): Promise<any[]> {
     });
 }
 
-async function upsertBatchSequential(rows: any[]) {
+async function upsertBatchSequential(rows: Record<string, string>[]) {
     let succeeded = 0;
     for (let i = 0; i < rows.length; i++) {
         const r = rows[i];
@@ -106,8 +106,9 @@ async function upsertBatchSequential(rows: any[]) {
                 },
             });
             succeeded++;
-        } catch (err: any) {
-            console.error(`Upsert error for code=${code} (row index in batch=${i}):`, err?.message ?? err);
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            console.error(`Upsert error for code=${code} (row index in batch=${i}):`, errorMessage);
             try {
                 const failPath = path.resolve(TMP_DIR, `failed-row-${code || 'idx' + i}-${Date.now()}.json`);
                 fs.mkdirSync(path.dirname(failPath), { recursive: true });
@@ -165,7 +166,7 @@ async function main() {
         console.error('Fatal error in seeding:', err);
         try {
             await prisma.$disconnect();
-        } catch (_) { }
+        } catch { /* empty */ }
         process.exit(1);
     }
 }

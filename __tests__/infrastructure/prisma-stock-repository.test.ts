@@ -5,7 +5,6 @@
  */
 
 import { PrismaStockRepository } from "@/infrastructure/repositories/prisma-stock-repository";
-import { Stock } from "@/domain";
 
 // モックPrismaClient
 const mockPrisma = {
@@ -88,6 +87,7 @@ describe("PrismaStockRepository", () => {
 
             const result = await repository.search({});
 
+            expect(result.total).toBe(100);
             expect(mockPrisma.stock.findMany).toHaveBeenCalledWith(
                 expect.objectContaining({
                     where: {},

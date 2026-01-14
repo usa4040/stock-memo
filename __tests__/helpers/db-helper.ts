@@ -39,7 +39,7 @@ export async function withTransaction<T>(
     fn: (tx: PrismaClient) => Promise<T>
 ): Promise<T> {
     return prisma.$transaction(async (tx) => {
-        const result = await fn(tx as PrismaClient);
+        await fn(tx as PrismaClient);
         // テスト後はロールバック（エラーを投げる）
         throw new Error("ROLLBACK_TRANSACTION");
     }).catch((e) => {

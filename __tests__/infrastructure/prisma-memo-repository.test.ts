@@ -87,6 +87,7 @@ describe("PrismaMemoRepository", () => {
 
             const result = await repository.findByUserId("user-123", { page: 3, limit: 10 });
 
+            expect(result.total).toBe(50);
             expect(mockPrisma.memo.findMany).toHaveBeenCalledWith(
                 expect.objectContaining({
                     skip: 20, // (3-1) * 10

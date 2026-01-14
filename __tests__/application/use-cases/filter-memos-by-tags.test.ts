@@ -33,7 +33,8 @@ describe("タグでフィルタリング機能", () => {
             const mockRepository = createMockRepository();
 
             const memo1 = createTestMemo({ id: "memo-1", tags: ["長期投資", "高配当"] });
-            const memo2 = createTestMemo({ id: "memo-2", tags: ["短期投資"] });
+            // memo2は「長期投資」タグを持たないのでフィルタ結果に含まれない
+            createTestMemo({ id: "memo-2", tags: ["短期投資"] });
             const memo3 = createTestMemo({ id: "memo-3", tags: ["長期投資", "バリュー"] });
 
             // 「長期投資」タグでフィルタリング

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { render, screen } from "@testing-library/react";
 
 // next/link をモック

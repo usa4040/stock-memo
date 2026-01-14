@@ -39,15 +39,16 @@ describe("SearchMemosUseCase", () => {
   });
 
   it("キーワードでメモを検索できる", async () => {
-    const memo1 = createTestMemo({ 
-      id: "memo-1", 
-      title: "トヨタの分析", 
-      content: "長期投資に向いている" 
+    const memo1 = createTestMemo({
+      id: "memo-1",
+      title: "トヨタの分析",
+      content: "長期投資に向いている"
     });
-    const memo2 = createTestMemo({ 
-      id: "memo-2", 
-      title: "ソニーの決算", 
-      content: "好決算で株価上昇" 
+    // memo2は検索結果に含まれないことを確認するため作成
+    createTestMemo({
+      id: "memo-2",
+      title: "ソニーの決算",
+      content: "好決算で株価上昇"
     });
 
     mockRepository.searchByKeyword.mockResolvedValue({
@@ -70,15 +71,15 @@ describe("SearchMemosUseCase", () => {
   });
 
   it("タイトルと内容の両方を検索できる", async () => {
-    const memo1 = createTestMemo({ 
-      id: "memo-1", 
-      title: "分析メモ", 
-      content: "長期投資のポイント" 
+    const memo1 = createTestMemo({
+      id: "memo-1",
+      title: "分析メモ",
+      content: "長期投資のポイント"
     });
-    const memo2 = createTestMemo({ 
-      id: "memo-2", 
-      title: "長期投資戦略", 
-      content: "バリュー株を狙う" 
+    const memo2 = createTestMemo({
+      id: "memo-2",
+      title: "長期投資戦略",
+      content: "バリュー株を狙う"
     });
 
     mockRepository.searchByKeyword.mockResolvedValue({
