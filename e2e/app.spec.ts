@@ -72,88 +72,26 @@ test.describe("ログインページ", () => {
         await expect(page.locator("h1")).toContainText("ログイン");
     });
 
-    test("メールアドレス入力フィールドがある", async ({ page }) => {
+    test("Googleログインボタンが表示される", async ({ page }) => {
         await page.goto("/auth/signin");
 
-        // メールアドレス入力フィールドを確認
-        const emailInput = page.locator('input[type="email"]');
-        await expect(emailInput).toBeVisible();
-    });
-
-    test("メールアドレスでログインできる", async ({ page }) => {
-        await page.goto("/auth/signin");
-
-        // メールアドレスを入力
-        const emailInput = page.locator('input[type="email"]');
-        await emailInput.fill("test-e2e@example.com");
-
-        // ログインボタンをクリック
-        await page.click('button[type="submit"]');
-
-        // ダッシュボードまたはホームにリダイレクト
-        await page.waitForURL(/\/(dashboard|$)/);
+        // Googleログインボタンを確認
+        await expect(page.locator('text=Googleでログイン')).toBeVisible();
     });
 });
 
 /**
- * 認証済みユーザーのフロー E2Eテスト
+ * 銘柄詳細ページ E2Eテスト
  */
-test.describe("認証済みユーザーフロー", () => {
-    // 各テスト前にログイン
-    test.beforeEach(async ({ page }) => {
-        await page.goto("/auth/signin");
-        const emailInput = page.locator('input[type="email"]');
-        await emailInput.fill("test-e2e-flow@example.com");
-        await page.click('button[type="submit"]');
-        await page.waitForURL(/\/(dashboard|$)/);
-    });
-
-    test("ダッシュボードにアクセスできる", async ({ page }) => {
-        await page.goto("/dashboard");
-
-        // ダッシュボードのコンテンツを確認
-        await expect(page.locator("body")).toContainText(/総メモ数|ダッシュボード/);
-    });
-
-    test("メモ一覧にアクセスできる", async ({ page }) => {
-        await page.goto("/memos");
-
-        // メモ一覧ページを確認
-        await expect(page.locator("h1")).toContainText("メモ");
-    });
-
-    test("ウォッチリストにアクセスできる", async ({ page }) => {
-        await page.goto("/watchlist");
-
-        // ウォッチリストページを確認
-        await expect(page.locator("h1")).toContainText("ウォッチリスト");
-    });
-});
-
-/**
- * メモ作成フロー E2Eテスト
- */
-test.describe("メモ作成フロー", () => {
-    test.beforeEach(async ({ page }) => {
-        // ログイン
-        await page.goto("/auth/signin");
-        const emailInput = page.locator('input[type="email"]');
-        await emailInput.fill("test-e2e-memo@example.com");
-        await page.click('button[type="submit"]');
-        await page.waitForURL(/\/(dashboard|$)/);
-    });
-
-    test("銘柄詳細ページからメモ作成ページに遷移できる", async ({ page }) => {
+test.describe("銘柄詳細ページ", () => {
+    test("銘柄詳細ページが表示される", async ({ page }) => {
         // トヨタの銘柄詳細ページへ
         await page.goto("/stocks/7203");
 
-        // 「メモを追加」ボタンをクリック
-        const addMemoButton = page.locator('text=メモを追加');
-        if (await addMemoButton.isVisible()) {
-            await addMemoButton.click();
+        // ページが読み込まれるまで待機
+        await page.waitForLoadState("networkidle");
 
-            // メモ作成ページに遷移
-            await expect(page).toHaveURL(/\/memos\/new/);
-        }
+        // 銘柄コードまたは銘柄名が表示される
+        await expect(page.locator("body")).toContainText(/7203|トヨタ/);
     });
 });

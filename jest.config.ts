@@ -14,12 +14,13 @@ const baseConfig: Config = {
     // テスト環境
     testEnvironment: "jsdom",
 
-    // テストファイルのパターン（統合テストを除外）
+    // テストファイルのパターン（統合テスト・E2Eテストを除外）
     testPathIgnorePatterns: [
         "/node_modules/",
         "/__tests__/integration/",
         "/__tests__/factories/",
         "/__tests__/helpers/",
+        "/e2e/",
     ],
 
     // テストファイルのパターン
