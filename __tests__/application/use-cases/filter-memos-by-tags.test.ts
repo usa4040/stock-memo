@@ -9,7 +9,14 @@ const createMockRepository = (): jest.Mocked<IMemoRepository> => ({
     save: jest.fn(),
     delete: jest.fn(),
     countByUserId: jest.fn(),
-    findByUserIdAndTags: jest.fn(), // 新しいメソッド
+    findByUserIdAndTags: jest.fn(),
+    searchByKeyword: jest.fn(),
+    findPinnedByUserId: jest.fn(),
+    findRecentByUserId: jest.fn(),
+    getTagStatistics: jest.fn(),
+    countUniqueStocksByUserId: jest.fn(),
+    countUniqueTagsByUserId: jest.fn(),
+    countPinnedByUserId: jest.fn(),
 });
 
 // テスト用メモを作成
