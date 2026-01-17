@@ -45,9 +45,16 @@ export default defineConfig({
 
     // テスト用のブラウザ設定
     projects: [
+        // 認証セットアップ
+        {
+            name: "setup",
+            testMatch: /auth\.setup\.ts/,
+        },
+        // 通常のテスト（認証不要）
         {
             name: "chromium",
             use: { ...devices["Desktop Chrome"] },
+            testIgnore: /auth\.setup\.ts/,
         },
         // 必要に応じて追加
         // {
